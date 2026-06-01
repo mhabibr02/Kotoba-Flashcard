@@ -1546,9 +1546,17 @@ function loadCard() {
   } else {
     tag.innerHTML = '&#x1F500; Acak';
   }
-  document.getElementById('g-btns').style.display = 'flex';
+  // Hide both button groups while loading new card to prevent any flash of next answer
+  document.getElementById('g-btns').style.display = 'none';
   document.getElementById('g-judge-btns').style.display = 'none';
-  document.getElementById('btn-reveal').disabled = false;
+
+  // Show reveal button only after a tiny delay to ensure card is fully reset/painted
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.getElementById('g-btns').style.display = 'flex';
+      document.getElementById('btn-reveal').disabled = false;
+    });
+  });
 
   // sync height after paint
   requestAnimationFrame(syncGameCardHeight);
@@ -1564,10 +1572,27 @@ function revealCard() {
 
 function judgeCard(correct) {
   const card = document.getElementById('game-card');
+
+  // Immediately hide judge buttons so user can't click again
+  document.getElementById('g-judge-btns').style.display = 'none';
+
   if(correct){ gameCorrect++; card.classList.add('correct-flash'); }
   else       { gameWrong++;   card.classList.add('wrong-flash'); }
   updateScore();
-  setTimeout(()=>{ gameIndex++; loadCard(); }, 700);
+
+  // Step 1: After brief flash (500ms), flip the card BACK to front face
+  setTimeout(() => {
+    card.classList.remove('correct-flash','wrong-flash');
+    card.classList.remove('revealed'); // flip back to front
+    isRevealed = false;
+
+    // Step 2: Wait for the flip-back animation to finish (700ms = transition duration),
+    // THEN load the next card data. This prevents the next answer from showing mid-flip.
+    setTimeout(() => {
+      gameIndex++;
+      loadCard();
+    }, 720);
+  }, 500);
 }
 
 function updateScore(){
