@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漢字カード · Kanji Flashcard</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Zen+Dots&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:    #FF3D5A;
+    --orange: #FF7A2F;
+    --yellow: #FFD23F;
+    --green:  #3ECFA0;
+    --blue:   #3A86FF;
+    --purple: #9B5DE5;
+    --pink:   #F72585;
+    --bg:     #0D0D1A;
+    --surface:#151528;
+    --card:   #1C1C38;
+    --border: rgba(255,255,255,0.08);
+    --text:   #F0F0FF;
+    --muted:  #8888AA;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+  .blobs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15; animation: drift 18s infinite alternate ease-in-out; }
+  .blob:nth-child(1) { width:500px;height:500px; background:var(--purple); top:-100px;left:-100px; animation-duration:20s; }
+  .blob:nth-child(2) { width:400px;height:400px; background:var(--blue);   top:40%;right:-80px;  animation-duration:16s; animation-delay:-5s; }
+  .blob:nth-child(3) { width:350px;height:350px; background:var(--pink);   bottom:-80px;left:30%;animation-duration:22s; animation-delay:-10s; }
+  @keyframes drift { from{transform:translate(0,0) scale(1);} to{transform:translate(40px,30px) scale(1.1);} }
+
+  .container { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
+
+  header {
+    padding: 24px 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Zen Dots', cursive; font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--yellow), var(--orange), var(--red));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;
+  }
+  .logo span { font-family:'Noto Sans JP'; font-size:1.1rem; color:var(--muted); margin-left:8px; -webkit-text-fill-color:var(--muted); }
+  nav { display:flex; gap:8px; }
+  .nav-btn {
+    padding: 8px 18px; border-radius: 50px; border: none; cursor: pointer;
+    font-family:'Poppins'; font-size:.85rem; font-weight:600; transition: all .2s;
+  }
+  .nav-btn.active { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; }
+  .nav-btn:not(.active) { background:var(--card); color:var(--muted); border:1px solid var(--border); }
+  .nav-btn:hover:not(.active) { color:var(--text); border-color:rgba(255,255,255,.2); }
+
+  .page { display:none; padding: 32px 0 60px; animation: fadeUp .4s ease; }
+  .page.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+  .section-title {
+    font-size:1.3rem; font-weight:700; margin-bottom:24px;
+    display:flex; align-items:center; gap:12px; justify-content:center; text-align:center;
+  }
+  .badge { display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:.8rem;font-weight:700; }
+
+  /* ══════════════════════════════
+     MANAGE PAGE
+  ══════════════════════════════ */
+  .add-form {
+    background: var(--card); border:1px solid var(--border);
+    border-radius: 20px; padding:28px;
+    display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:14px; align-items:end;
+    margin-bottom:32px;
+  }
+  .form-group label { display:block; font-size:.75rem; font-weight:600; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; text-align:center; }
+  .form-group input {
+    width:100%; padding:12px 16px; border-radius:12px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text); font-size:1rem; font-family:'Noto Sans JP','Poppins',sans-serif;
+    transition: border-color .2s, box-shadow .2s; outline: none; text-align:center;
+  }
+  .form-group input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(58,134,255,.15); }
+  .form-group input::placeholder { color: var(--muted); opacity: .6; }
+  .btn-add {
+    padding:12px 24px; border-radius:12px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--green),var(--blue));
+    color:#fff; font-weight:700; font-size:.9rem; font-family:'Poppins';
+    transition: transform .15s, box-shadow .15s; white-space:nowrap;
+  }
+  .btn-add:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(58,199,132,.3); }
+
+  .col-count-info {
+    display:flex; justify-content:center; align-items:center; gap:12px;
+    margin-bottom:16px; font-size:.85rem; color:var(--muted);
+  }
+  .col-count-info strong { font-family:'Zen Dots'; color:var(--yellow); font-size:.95rem; }
+
+  /* Manage list — horizontal rows, no ellipsis */
+  .manage-list { display:flex; flex-direction:column; gap:10px; }
+  .manage-header {
+    display:grid; grid-template-columns:60px 1fr 1fr 1fr 40px;
+    gap:12px; padding:0 20px 8px;
+    font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; text-align:center;
+  }
+  .fc-item {
+    background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 20px;
+    display:grid; grid-template-columns:60px 1fr 1fr 1fr 40px;
+    align-items:center; gap:12px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .fc-item:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  .fc-num {
+    font-family:'Zen Dots'; font-size:.65rem;
+    padding:4px 8px; border-radius:50px; text-align:center;
+    background:linear-gradient(135deg,var(--purple),var(--blue)); color:#fff;
+  }
+  /* No ellipsis — allow wrap */
+  .fc-kanji {
+    font-family:'Noto Sans JP'; font-weight:900; text-align:center;
+    font-size:clamp(.85rem, 2vw, 1.6rem);
+    word-break:break-all; line-height:1.3;
+  }
+  .fc-furi { font-family:'Noto Sans JP'; font-size:.82rem; color:var(--yellow); text-align:center; word-break:break-word; line-height:1.4; }
+  .fc-mean { font-size:.82rem; color:var(--muted); text-align:center; word-break:break-word; line-height:1.4; }
+  .fc-del {
+    width:32px;height:32px; border-radius:50%; border:none;
+    background:rgba(255,61,90,.15); color:var(--red);
+    font-size:.9rem; cursor:pointer; display:flex;align-items:center;justify-content:center;
+    transition: background .2s; flex-shrink:0; margin:0 auto;
+  }
+  .fc-del:hover { background:var(--red); color:#fff; }
+  .fc-item:nth-child(6n+1) .fc-kanji { color:var(--red); }
+  .fc-item:nth-child(6n+2) .fc-kanji { color:var(--orange); }
+  .fc-item:nth-child(6n+3) .fc-kanji { color:var(--yellow); }
+  .fc-item:nth-child(6n+4) .fc-kanji { color:var(--green); }
+  .fc-item:nth-child(6n+5) .fc-kanji { color:var(--blue); }
+  .fc-item:nth-child(6n+6) .fc-kanji { color:var(--pink); }
+
+  /* ══════════════════════════════
+     BROWSE PAGE
+     Flip cards: horizontal, auto height — no ellipsis
+  ══════════════════════════════ */
+  .browse-controls {
+    display:flex; gap:12px; margin-bottom:28px; flex-wrap:wrap; align-items:center; justify-content:center;
+  }
+  .btn-ctrl {
+    padding:10px 20px; border-radius:50px; border:1px solid var(--border);
+    background:var(--card); color:var(--text); cursor:pointer;
+    font-family:'Poppins'; font-size:.85rem; font-weight:600; transition:all .2s;
+  }
+  .btn-ctrl:hover { border-color:var(--blue); color:var(--blue); }
+  .btn-ctrl.primary { background:linear-gradient(135deg,var(--red),var(--orange)); border-color:transparent; color:#fff; }
+
+  .flip-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+
+  /* IMPORTANT: no fixed height — let content determine height.
+     We use a "paired height" trick via JS after render. */
+  .flip-card { perspective:1000px; cursor:pointer; }
+
+  /* flip-inner must match the card height.
+     We set it via JS to max(front, back) natural height. */
+  .flip-card-wrap {
+    position:relative;
+    transition: transform .6s cubic-bezier(.4,0,.2,1);
+    transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-card-wrap { transform: rotateY(180deg); }
+
+  .flip-front, .flip-back {
+    border-radius:16px; border:1px solid var(--border);
+    padding:18px 20px;
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    /* No overflow hidden, no ellipsis */
+  }
+  /* Front face: shown normally */
+  .flip-front {
+    background: var(--card);
+    flex-direction:row;
+  }
+  /* Back face: absolutely positioned on top, hidden by backface-visibility */
+  .flip-back {
+    position:absolute; inset:0;
+    background:linear-gradient(135deg,#1a1a3e,#0d1a2e);
+    transform: rotateY(180deg);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    flex-direction:row; gap:0;
+  }
+  /* Front face also needs backface hidden when flipped */
+  .flip-front {
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+
+  .flip-front .fn { font-family:'Zen Dots'; font-size:.65rem; color:var(--muted); min-width:36px; text-align:center; flex-shrink:0; }
+  .flip-front .fk {
+    font-family:'Noto Sans JP'; font-weight:900;
+    font-size:clamp(1rem,3vw,2rem);
+    word-break:break-all; text-align:center; flex:1; line-height:1.2;
+  }
+  .flip-front .hint { font-size:.6rem; color:var(--muted); min-width:40px; text-align:center; flex-shrink:0; }
+
+  .flip-back-inner { display:flex; flex-direction:row; align-items:center; width:100%; min-height:100%; gap:0; }
+  .back-furi-wrap, .back-mean-wrap {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:4px; padding:4px 12px;
+  }
+  .back-divider { width:1px; align-self:stretch; background:rgba(255,255,255,.1); flex-shrink:0; margin:4px 0; }
+  .back-label { font-size:.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  /* No ellipsis, allow wrap */
+  .back-furi { font-family:'Noto Sans JP'; font-size:clamp(.8rem,2vw,1.05rem); font-weight:700; color:var(--yellow); text-align:center; word-break:break-word; line-height:1.4; }
+  .back-mean { font-size:clamp(.75rem,1.8vw,1rem); font-weight:600; color:var(--text); text-align:center; word-break:break-word; line-height:1.4; }
+
+  /* color borders */
+  .flip-card:nth-child(6n+1) .flip-front { border-color:rgba(255,61,90,.35); }
+  .flip-card:nth-child(6n+1) .flip-front .fk { color:var(--red); }
+  .flip-card:nth-child(6n+2) .flip-front { border-color:rgba(255,122,47,.35); }
+  .flip-card:nth-child(6n+2) .flip-front .fk { color:var(--orange); }
+  .flip-card:nth-child(6n+3) .flip-front { border-color:rgba(255,210,63,.35); }
+  .flip-card:nth-child(6n+3) .flip-front .fk { color:var(--yellow); }
+  .flip-card:nth-child(6n+4) .flip-front { border-color:rgba(62,207,160,.35); }
+  .flip-card:nth-child(6n+4) .flip-front .fk { color:var(--green); }
+  .flip-card:nth-child(6n+5) .flip-front { border-color:rgba(58,134,255,.35); }
+  .flip-card:nth-child(6n+5) .flip-front .fk { color:var(--blue); }
+  .flip-card:nth-child(6n+6) .flip-front { border-color:rgba(247,37,133,.35); }
+  .flip-card:nth-child(6n+6) .flip-front .fk { color:var(--pink); }
+
+  /* ══════════════════════════════
+     GAME PAGE
+  ══════════════════════════════ */
+  .game-wrap { max-width:600px; margin:0 auto; }
+
+  .progress-bar-wrap { margin-bottom:24px; }
+  .progress-info { display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); margin-bottom:8px; }
+  .progress-bar { height:6px; border-radius:50px; background:var(--card); overflow:hidden; }
+  .progress-fill { height:100%; border-radius:50px; background:linear-gradient(90deg,var(--blue),var(--purple)); transition:width .5s ease; }
+
+  .score-row { display:flex; gap:12px; justify-content:center; margin-bottom:28px; }
+  .score-chip { padding:8px 20px; border-radius:50px; font-size:.85rem; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .score-chip.correct { background:rgba(62,207,160,.15); color:var(--green); border:1px solid rgba(62,207,160,.3); }
+  .score-chip.wrong   { background:rgba(255,61,90,.15);  color:var(--red);   border:1px solid rgba(255,61,90,.3); }
+
+  /* Game card — dynamic height, horizontal layout */
+  .game-card-area { perspective:1200px; margin-bottom:28px; }
+  .game-card {
+    width:100%; border-radius:28px;
+    position:relative; transform-style:preserve-3d;
+    transition: transform .7s cubic-bezier(.4,0,.2,1);
+    cursor:pointer;
+    /* min-height so card is never too small */
+    min-height:180px;
+  }
+  .game-card.revealed { transform:rotateY(180deg); }
+
+  .game-front, .game-back {
+    position:absolute; inset:0; border-radius:28px;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    display:flex; align-items:center; justify-content:center;
+    padding:28px 40px; border:2px solid rgba(255,255,255,.08);
+  }
+  /* We override "position:absolute;inset:0" on front to set height,
+     and make back match via JS */
+  .game-front {
+    background:linear-gradient(145deg,#1C1C38,#252545);
+    flex-direction:row; gap:32px;
+    /* let front be positioned to set height */
+    position:relative; inset:auto;
+  }
+  .game-back {
+    background:linear-gradient(145deg,#0d1a2e,#1a1a3e);
+    transform:rotateY(180deg);
+    flex-direction:row; gap:0;
+    /* absolutely cover front */
+    position:absolute; inset:0;
+  }
+
+  .game-front-left { display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0; }
+  .game-num { font-family:'Zen Dots'; font-size:.85rem; color:var(--muted); }
+  .game-prompt { font-size:.7rem; color:var(--muted); text-align:center; line-height:1.4; }
+
+  /* No ellipsis, word wrap */
+  .game-kanji {
+    font-family:'Noto Sans JP'; font-weight:900;
+    font-size:clamp(2rem, 8vw, 5rem);
+    word-break:break-all; text-align:center; flex:1; line-height:1.15;
+  }
+
+  .game-back-section {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:6px; padding:0 16px;
+  }
+  .game-divider { width:1px; align-self:stretch; background:rgba(255,255,255,.1); flex-shrink:0; margin:8px 0; }
+  .g-label { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+
+  /* No ellipsis, word wrap */
+  .g-furi { font-family:'Noto Sans JP'; font-size:clamp(.95rem,3vw,1.5rem); font-weight:700; color:var(--yellow); text-align:center; word-break:break-word; line-height:1.4; width:100%; }
+  .g-mean { font-size:clamp(.9rem,2.5vw,1.15rem); font-weight:600; color:var(--text); text-align:center; word-break:break-word; line-height:1.4; width:100%; }
+
+  .game-card.correct-flash .game-back { border-color:rgba(62,207,160,.6); box-shadow:0 0 40px rgba(62,207,160,.2); }
+  .game-card.wrong-flash   .game-back { border-color:rgba(255,61,90,.6);   box-shadow:0 0 40px rgba(255,61,90,.2); }
+
+  .answer-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .answer-btn {
+    padding:14px 32px; border-radius:16px; border:none; cursor:pointer;
+    font-family:'Poppins'; font-size:1rem; font-weight:700;
+    transition: transform .15s, box-shadow .2s; min-width:140px;
+  }
+  .answer-btn.reveal-btn { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; flex:1; max-width:300px; }
+  .answer-btn.correct-btn { background:linear-gradient(135deg,var(--green),#0d9b6a); color:#fff; }
+  .answer-btn.wrong-btn   { background:linear-gradient(135deg,var(--red),#cc0033); color:#fff; }
+  .answer-btn:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.4); }
+  .answer-btn:active { transform:translateY(0); }
+  .answer-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+  .result-screen { text-align:center; padding:48px 20px; animation: fadeUp .5s ease; }
+  .result-emoji  { font-size:5rem; margin-bottom:16px; }
+  .result-title  { font-size:2rem; font-weight:700; margin-bottom:8px; }
+  .result-sub    { color:var(--muted); margin-bottom:32px; }
+  .result-score-big { font-family:'Zen Dots'; font-size:4rem; background:linear-gradient(135deg,var(--yellow),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:32px; }
+
+  .game-start { text-align:center; padding:48px 20px; }
+  .game-start h2 { font-size:1.8rem; font-weight:700; margin-bottom:12px; }
+  .game-start p  { color:var(--muted); margin-bottom:32px; }
+  .start-btn {
+    padding:16px 48px; border-radius:50px; border:none; cursor:pointer;
+    font-family:'Poppins'; font-size:1.1rem; font-weight:700;
+    background:linear-gradient(135deg,var(--red),var(--orange),var(--yellow));
+    color:#fff; transition:transform .15s, box-shadow .2s;
+    box-shadow:0 8px 30px rgba(255,100,50,.3);
+  }
+  .start-btn:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 14px 40px rgba(255,100,50,.4); }
+
+  .shuffle-tag {
+    display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:50px;
+    background:rgba(255,210,63,.1); border:1px solid rgba(255,210,63,.2);
+    color:var(--yellow); font-size:.75rem; font-weight:600;
+  }
+
+  /* ── RANGE SELECTOR ── */
+  .range-panel {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:20px; padding:20px 20px; margin:20px auto 0;
+    max-width:480px; width:100%; text-align:left;
+    box-sizing:border-box; overflow:hidden;
+  }
+  .range-panel-title {
+    font-size:.8rem; font-weight:700; color:var(--muted);
+    text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .range-mode-tabs {
+    display:flex; gap:8px; margin-bottom:18px; width:100%;
+  }
+  .range-tab {
+    flex:1; padding:8px 4px; border-radius:10px; border:1px solid var(--border);
+    background:var(--surface); color:var(--muted); cursor:pointer;
+    font-family:'Poppins'; font-size:.78rem; font-weight:600; transition:all .2s;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .range-tab.active {
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    border-color:transparent; color:#fff;
+  }
+  .range-inputs {
+    display:flex; align-items:center; gap:8px; width:100%;
+  }
+  .range-inputs input[type=number] {
+    flex:1; min-width:0; padding:10px 8px; border-radius:10px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text); font-size:1rem; font-family:'Poppins';
+    text-align:center; outline:none; transition:border-color .2s, box-shadow .2s;
+    -moz-appearance: textfield; box-sizing:border-box;
+  }
+  .range-inputs input[type=number]::-webkit-inner-spin-button,
+  .range-inputs input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+  .range-inputs input[type=number]:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(58,134,255,.15); }
+  .range-sep { color:var(--muted); font-weight:700; font-size:1.1rem; flex-shrink:0; }
+  .range-quick { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; width:100%; }
+  .range-quick-btn {
+    padding:4px 10px; border-radius:50px; border:1px solid var(--border);
+    background:var(--surface); color:var(--muted); cursor:pointer;
+    font-family:'Poppins'; font-size:.72rem; font-weight:600; transition:all .2s;
+  }
+  .range-quick-btn:hover { border-color:var(--yellow); color:var(--yellow); }
+  .range-info-row {
+    margin-top:12px; padding:9px 12px; border-radius:10px;
+    background:rgba(58,134,255,.08); border:1px solid rgba(58,134,255,.15);
+    font-size:.78rem; color:var(--blue); display:flex; align-items:center; gap:6px;
+    width:100%; box-sizing:border-box; word-break:break-word;
+  }
+  .range-info-row.warn { background:rgba(255,61,90,.08); border-color:rgba(255,61,90,.2); color:var(--red); }
+  .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+  .empty-state .e-icon { font-size:4rem; margin-bottom:16px; }
+
+  @media(max-width:650px) {
+    .add-form { grid-template-columns:1fr 1fr; }
+    .add-form .btn-add { grid-column:1/-1; }
+    .flip-grid { grid-template-columns:1fr; }
+    .manage-header { display:none; }
+    .fc-item { grid-template-columns:52px 1fr 1fr 36px; }
+    .fc-mean-col { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="blobs"><div class="blob"></div><div class="blob"></div><div class="blob"></div></div>
+
+<div class="container">
+  <header>
+    <div class="logo">漢字カード <span>· Flashcard</span></div>
+    <nav>
+      <button class="nav-btn active" onclick="showPage('manage')">✏️ Kelola</button>
+      <button class="nav-btn" onclick="showPage('browse')">🗂️ Browse</button>
+      <button class="nav-btn" onclick="showPage('game')">🎮 Game</button>
+    </nav>
+  </header>
+
+  <!-- ── MANAGE ── -->
+  <div id="page-manage" class="page active">
+    <div class="section-title">
+      <div class="badge" style="background:linear-gradient(135deg,var(--purple),var(--blue))">✏️</div>
+      Kelola Flashcard
+    </div>
+    <div class="add-form">
+      <div class="form-group">
+        <label>Kanji (漢字)</label>
+        <input id="inp-kanji" type="text" placeholder="e.g. 山">
+      </div>
+      <div class="form-group">
+        <label>Furigana (読み方)</label>
+        <input id="inp-furi" type="text" placeholder="e.g. やま (yama)">
+      </div>
+      <div class="form-group">
+        <label>Arti (意味)</label>
+        <input id="inp-mean" type="text" placeholder="e.g. Gunung">
+      </div>
+      <button class="btn-add" onclick="addCard()">＋ Tambah</button>
+    </div>
+    <div class="col-count-info">Koleksi Kartu · <strong id="card-count">0 kartu</strong></div>
+    <div class="manage-header">
+      <span>No</span><span>Kanji</span><span>Furigana</span><span>Arti</span><span></span>
+    </div>
+    <div id="manage-list" class="manage-list"></div>
+    <div id="manage-empty" class="empty-state" style="display:none;">
+      <div class="e-icon">🃏</div><p>Belum ada kartu. Tambahkan kanji pertamamu!</p>
+    </div>
+  </div>
+
+  <!-- ── BROWSE ── -->
+  <div id="page-browse" class="page">
+    <div class="section-title">
+      <div class="badge" style="background:linear-gradient(135deg,var(--orange),var(--yellow))">🗂️</div>
+      Browse Flashcard
+      <span style="color:var(--muted);font-size:.85rem;font-weight:400;">· Klik kartu untuk membalik</span>
+    </div>
+    <div class="browse-controls">
+      <button class="btn-ctrl" onclick="flipAll(true)">Buka Semua</button>
+      <button class="btn-ctrl" onclick="flipAll(false)">Tutup Semua</button>
+      <button class="btn-ctrl primary" onclick="showPage('game')">🎮 Main Game</button>
+    </div>
+    <div id="flip-grid" class="flip-grid"></div>
+    <div id="browse-empty" class="empty-state" style="display:none;">
+      <div class="e-icon">📭</div><p>Tidak ada kartu. Tambahkan dulu di halaman Kelola!</p>
+    </div>
+  </div>
+
+  <!-- ── GAME ── -->
+  <div id="page-game" class="page">
+    <div id="game-start-screen" class="game-start">
+      <div style="font-size:4rem;margin-bottom:16px;">🎌</div>
+      <h2>Mode Tebak Kanji!</h2>
+      <p>Tebak arti dari setiap kanji yang muncul.<br>Klik kartu untuk melihat jawaban, lalu nilai dirimu sendiri.</p>
+      <div style="margin-bottom:16px;" id="game-empty-note"></div>
+
+      <!-- RANGE SELECTOR PANEL -->
+      <div class="range-panel" id="range-panel">
+        <div class="range-panel-title">&#x1F4CB; Pilih Range Flashcard</div>
+        <div class="range-mode-tabs">
+          <button class="range-tab active" id="tab-all" onclick="setRangeMode('all')">&#x1F0CF; Semua Kartu</button>
+          <button class="range-tab" id="tab-range" onclick="setRangeMode('range')">&#x1F3AF; Range Tertentu</button>
+        </div>
+
+        <div id="range-inputs-wrap" style="display:none;">
+          <div class="range-inputs">
+            <input type="number" id="inp-range-from" placeholder="Dari" min="1" oninput="updateRangeInfo()">
+            <span class="range-sep">&#x2014;</span>
+            <input type="number" id="inp-range-to" placeholder="Sampai" min="1" oninput="updateRangeInfo()">
+          </div>
+          <div class="range-quick" id="range-quick-wrap"></div>
+        </div>
+
+        <div class="range-info-row" id="range-info-row">
+          &#x1F4E6; <span id="range-info-text">Semua kartu akan digunakan</span>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <button class="start-btn" onclick="startGame()">&#x25B6; Mulai Game</button>
+      </div>
+    </div>
+
+    <div id="game-play-screen" style="display:none;">
+      <div class="game-wrap">
+        <div class="progress-bar-wrap">
+          <div class="progress-info">
+            <span id="g-prog-text">Kartu 1 dari 10</span>
+            <div class="shuffle-tag" id="g-range-tag">&#x1F500; Acak</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="g-prog-fill" style="width:0%"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-chip correct">✅ Benar: <span id="g-correct">0</span></div>
+          <div class="score-chip wrong">❌ Salah: <span id="g-wrong">0</span></div>
+        </div>
+
+        <div class="game-card-area">
+          <div class="game-card" id="game-card" onclick="revealCard()">
+            <div class="game-front">
+              <div class="game-front-left">
+                <div class="game-num" id="g-num">#01</div>
+                <div class="game-prompt">👆 Klik untuk<br>lihat jawaban</div>
+              </div>
+              <div class="game-kanji" id="g-kanji">山</div>
+            </div>
+            <div class="game-back">
+              <div class="game-back-section">
+                <div class="g-label">Furigana</div>
+                <div class="g-furi" id="g-furi">やま (yama)</div>
+              </div>
+              <div class="game-divider"></div>
+              <div class="game-back-section">
+                <div class="g-label">Artinya</div>
+                <div class="g-mean" id="g-mean">Gunung</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="answer-btns" id="g-btns">
+          <button class="answer-btn reveal-btn" id="btn-reveal" onclick="revealCard()">👁️ Lihat Jawaban</button>
+        </div>
+        <div class="answer-btns" id="g-judge-btns" style="display:none;">
+          <button class="answer-btn wrong-btn" onclick="judgeCard(false)">❌ Salah</button>
+          <button class="answer-btn correct-btn" onclick="judgeCard(true)">✅ Benar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-result-screen" style="display:none;">
+      <div class="result-screen">
+        <div class="result-emoji" id="r-emoji">🎉</div>
+        <div class="result-title" id="r-title">Luar Biasa!</div>
+        <div class="result-sub" id="r-sub">Kamu menjawab semua kartu!</div>
+        <div class="result-score-big" id="r-score">10/10</div>
+        <div style="color:var(--muted);margin-top:8px;font-size:.85rem;" id="r-percent"></div>
+        <div class="result-actions">
+          <button class="answer-btn reveal-btn" onclick="startGame()">&#x1F504; Main Lagi (Range Sama)</button>
+          <button class="answer-btn" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border:none;" onclick="renderGameStart();document.getElementById('game-result-screen').style.display='none';document.getElementById('game-start-screen').style.display='block';">&#x1F3AF; Ganti Range</button>
+          <button class="answer-btn" style="background:var(--card);border:1px solid var(--border);color:var(--text);" onclick="showPage('manage')">&#x270F;&#xFE0F; Edit Kartu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_CARDS = [
+{ kanji:'飲食料品製造業', furigana:'いんしょくりょうひんせいぞうぎょう', meaning:'Industri pengolahan makanan dan minuman' },
+{ kanji:'そう菜', furigana:'そうざい', meaning:'Lauk pauk/hidangan sehari-hari' },
+{ kanji:'缶詰', furigana:'かんづめ', meaning:'Kalengan' },
+{ kanji:'農林水産省', furigana:'のうりんすいさんしょう', meaning:'Kementerian pertanian, kehutanan, dan perikanan' },
+{ kanji:'国内生産額', furigana:'こくないせいさんがく', meaning:'Produksi dalam negeri' },
+{ kanji:'欠かせません', furigana:'かかせません', meaning:'Sangat diperlukan/krusial/penting' },
+{ kanji:'統計', furigana:'とうけい', meaning:'Statistik' },
+{ kanji:'動き', furigana:'うごき', meaning:'Perkembangan/pergerakan' },
+{ kanji:'畜産食料品', furigana:'ちくさんしょくりょうひん', meaning:'Bahan makanan ternak' },
+{ kanji:'水産食料品', furigana:'すいさんしょくりょうひん', meaning:'Produk perikanan' },
+{ kanji:'精穀・製粉', furigana:'せいこく・せいふん', meaning:'Tepung' },
+{ kanji:'生産額', furigana:'せいさんがく', meaning:'Jumlah produksi' },
+{ kanji:'兆円', furigana:'ちょうえん', meaning:'Triliun yen' },
+{ kanji:'菓子類', furigana:'かしるい', meaning:'Kembang gula/manisan' },
+{ kanji:'めん類', furigana:'めんるい', meaning:'Mi/bihun' },
+{ kanji:'食料関連産業', furigana:'しょくりょうかんれんさんぎょう', meaning:'Industri terkait makanan' },
+{ kanji:'経済計算', furigana:'けいざいけいさん', meaning:'Perhitungan ekonomi' },
+{ kanji:'概算', furigana:'がいさん', meaning:'Perkiraan' },
+{ kanji:'業種', furigana:'ぎょうしゅ', meaning:'Industri' },
+{ kanji:'食品衛生', furigana:'しょくひんえいせい', meaning:'Kebersihan makanan' },
+{ kanji:'労働安全', furigana:'ろうどうあんぜん', meaning:'Keselamatan kerja' },
+{ kanji:'知識', furigana:'ちしき', meaning:'Pengetahuan' },
+{ kanji:'技能', furigana:'ぎのう', meaning:'Keterampilan' },
+{ kanji:'いのち(生命)', furigana:'いのち(せいめい)', meaning:'Kehidupan' },
+{ kanji:'衛る', furigana:'まもる', meaning:'Mempertahankan' },
+{ kanji:'管理する', furigana:'かんりする', meaning:'Mengelola' },
+{ kanji:'十分', furigana:'じゅうぶん', meaning:'Sepenuhnya' },
+{ kanji:'信用', furigana:'しんよう', meaning:'Kepercayaan' },
+{ kanji:'労働災害', furigana:'ろうどうさいがい', meaning:'Kecelakaan kerja' },
+{ kanji:'作業服', furigana:'さぎょうふく', meaning:'Pakaian kerja' },
+{ kanji:'安全保護具', furigana:'あんぜんほごぐ', meaning:'Peralatan keselamatan' },
+{ kanji:'着用', furigana:'ちゃくよう', meaning:'Memakai' },
+{ kanji:'作業手順書', furigana:'さぎょうてじゅんしょ', meaning:'Panduan prosedur bekerja' },
+{ kanji:'守る', furigana:'まもる', meaning:'Mengikuti/mematuhi' },
+{ kanji:'機械', furigana:'きかい', meaning:'Mesin' },
+{ kanji:'器具', furigana:'きぐ', meaning:'Perkakas' },
+{ kanji:'作業者', furigana:'さぎょうしゃ', meaning:'Pekerja/operator' },
+{ kanji:'安全', furigana:'あんぜん', meaning:'Aman/keamanan' },
+{ kanji:'健康', furigana:'けんこう', meaning:'Kesehatan' },
+{ kanji:'基本', furigana:'きほん', meaning:'Dasar-dasar' },
+{ kanji:'行動', furigana:'こうどう', meaning:'Tindakan/perilaku' },
+{ kanji:'原材料', furigana:'げんざいりょう', meaning:'Bahan baku' },
+{ kanji:'温度', furigana:'おんど', meaning:'Suhu' },
+{ kanji:'保管する', furigana:'ほかんする', meaning:'Menyimpan' },
+{ kanji:'作業場', furigana:'さぎょうじょう', meaning:'Tempat kerja' },
+{ kanji:'共通', furigana:'きょうつう', meaning:'Praktik umum' },
+{ kanji:'基本的', furigana:'きほんてき', meaning:'Dasar' },
+{ kanji:'衛生管理', furigana:'えいせいかんり', meaning:'Manajemen kebersihan' },
+{ kanji:'施設', furigana:'しせつ', meaning:'Tempat/lokasi' },
+{ kanji:'設備', furigana:'せつび', meaning:'Peralatan/fasilitas' },
+{ kanji:'行う', furigana:'おこなう', meaning:'Melaksanakan/menjalankan' },
+{ kanji:'種類', furigana:'しゅるい', meaning:'Jenis' },
+{ kanji:'特徴', furigana:'とくちょう', meaning:'Karakteristik/perbedaan' },
+{ kanji:'応じる', furigana:'おうじる', meaning:'Tergantung' },
+{ kanji:'工程', furigana:'こうてい', meaning:'Proses' },
+{ kanji:'重要管理点', furigana:'じゅうようかんりてん', meaning:'Titik kontrol penting (CCP)' },
+{ kanji:'組み合わせる', furigana:'くみあわせる', meaning:'Penggabungan' },
+{ kanji:'危害要因分析', furigana:'きがいよういんぶんせき', meaning:'Analisis faktor bahaya' },
+{ kanji:'ハザード', furigana:'はざーど', meaning:'Hazard (bahaya)' },
+{ kanji:'原因', furigana:'げんいん', meaning:'Penyebab' },
+{ kanji:'含む', furigana:'ふくむ', meaning:'Mengandung' },
+{ kanji:'活動', furigana:'かつどう', meaning:'Aktivitas/kegiatan' },
+{ kanji:'学習する', furigana:'がくしゅう', meaning:'Mempelajari' },
+{ kanji:'危害要因', furigana:'きがいよういん', meaning:'Faktor bahaya' },
+{ kanji:'物理的危害要因', furigana:'ぶつりてききがいよういん', meaning:'Faktor bahasa fisik' },
+{ kanji:'化学的危害要因', furigana:'かがくてききがいよういん', meaning:'Faktor bahaya kimia' },
+{ kanji:'生物的危害要因', furigana:'せいぶつてききがいよういん', meaning:'Faktor bahaya biologis' },
+{ kanji:'硬い', furigana:'かたい', meaning:'Keras' },
+{ kanji:'尖る', furigana:'とがる', meaning:'Sensitif' },
+{ kanji:'傷', furigana:'きず', meaning:'Cedera/luka' },
+{ kanji:'代表的', furigana:'だいひょうてき', meaning:'Representasi/contoh' },
+{ kanji:'金属片', furigana:'きんぞくへん', meaning:'Potongan logam' },
+{ kanji: '取り除く', furigana: 'とりのぞく', meaning: 'Mengambil/memisah' },
+{ kanji: '異物', furigana: 'いぶつ', meaning: 'Benda asing' },
+{ kanji: '卵焼き', furigana: 'たまごやき', meaning: 'Telur dadar/gulung' },
+{ kanji: '殻', furigana: 'から', meaning: 'Cangkang' },
+{ kanji: '硬質異物', furigana: 'こうしついぶつ', meaning: 'Benda asing keras' },
+{ kanji: '混入する', furigana: 'こんにゅう', meaning: 'Mencampur/pencampuran' },
+{ kanji: '防止する', furigana: 'ぼうし', meaning: 'Mencegah' },
+{ kanji: '小石', furigana: 'こいし', meaning: 'Kerikil' },
+{ kanji: '野菜', furigana: 'やさい', meaning: 'Sayuran' },
+{ kanji: '洗浄する', furigana: 'せんじょうする', meaning: 'Mencuci' },
+{ kanji: '選別する', furigana: 'せんべつする', meaning: 'Menyortir' },
+{ kanji: '下処理', furigana: 'したしょり', meaning: 'Pra-perawatan' },
+{ kanji: '根', furigana: 'ね', meaning: 'Akar' },
+{ kanji: '部分', furigana: 'ぶぶん', meaning: 'Bagian' },
+{ kanji: '切り取る', furigana: 'きりとる', meaning: 'Memotong' },
+{ kanji: '貝の殻', furigana: 'かいのから', meaning: 'Cangkang kerang' },
+{ kanji: '魚のエラ', furigana: 'さかなのえら', meaning: 'Insang ikan' },
+{ kanji: '骨', furigana: 'ほね', meaning: 'Tulang' },
+{ kanji: '終わった材料', furigana: 'おわったざいりょう', meaning: 'Bahan jadi' },
+{ kanji: '調理', furigana: 'ちょうり', meaning: 'Memasak' },
+{ kanji: '蓋をする', furigana: 'ふたをする', meaning: 'Menutup' },
+{ kanji: '髪の毛', furigana: 'かみのけ', meaning: 'Rambut' },
+{ kanji: '紙片', furigana: 'しへん', meaning: 'Potongan' },
+{ kanji: '不潔', furigana: 'ふけつ', meaning: 'Tidak bersih/jorok/kotor' },
+{ kanji: '不衛生', furigana: 'ふえいせい', meaning: 'Tidak sehat/higienis' },
+{ kanji: '思われ', furigana: 'おもわれ', meaning: 'Tampak' },
+{ kanji: '苦情(クレーム)', furigana: 'くじょう(くれえむ)', meaning: 'Keluhan/klaim/komplain' },
+{ kanji: '返品', furigana: 'へんぴん', meaning: 'Pengembalian barang/retur' },
+{ kanji: 'つながる', furigana: '-', meaning: 'Mengarah' },
+{ kanji: '発見する', furigana: 'はっけんする', meaning: 'Menemukan' },
+{ kanji: '責任者', furigana: 'せきにんしゃ', meaning: 'Penanggung jawab' },
+{ kanji: '報告する', furigana: 'ほうこくする', meaning: 'Melapor' },
+{ kanji: '止める', furigana: 'とめる', meaning: 'Berhenti/Menghentikan' },
+{ kanji: '落とす', furigana: 'おとす', meaning: 'Jatuh' },
+{ kanji: 'アレルギー物質', furigana: 'あるれぎぃぶっしつ', meaning: 'Materi/substansi alergi' },
+{ kanji: 'ヒスタミン', furigana: 'ひすたみん', meaning: 'Histamina' },
+{ kanji: '芽', furigana: 'め', meaning: 'Tunas' },
+{ kanji: '含まれる', furigana: 'ふくまれる', meaning: 'Terdiri dari' },
+{ kanji:'ソラニン', furigana:'そらにん', meaning:'Solanina' },
+{ kanji:'殺菌剤', furigana:'さっきんざい', meaning:'Disinfektan/pembasmi kuman' },
+{ kanji:'薬剤', furigana:'やくざい', meaning:'Obat/bahan kimia' },
+{ kanji:'化学物質', furigana:'かがくぶっしつ', meaning:'Substansi kimia' },
+{ kanji:'アレルギー反応', furigana:'あれるぎーはんのう', meaning:'Reaksi/respons alergi' },
+{ kanji:'アレルゲン', furigana:'あれるげん', meaning:'Alergen' },
+{ kanji:'過剰', furigana:'かじょう', meaning:'Kelebihan' },
+{ kanji:'反応する', furigana:'はんのうする', meaning:'Merespons/mereaksi' },
+{ kanji:'症状', furigana:'しょうじょう', meaning:'Gejala' },
+{ kanji:'かゆみ', furigana:'-', meaning:'Gatal-gatal' },
+{ kanji:'じんましん', furigana:'-', meaning:'Ruam jelatang/urtikaria' },
+{ kanji:'唇', furigana:'くちびる', meaning:'Bibir' },
+{ kanji:'まぶた', furigana:'-', meaning:'Kelopak mata' },
+{ kanji:'腫れる', furigana:'はれる', meaning:'Bengkak' },
+{ kanji:'鼻水', furigana:'はなみず', meaning:'Ingus' },
+{ kanji:'くしゃみ', furigana:'-', meaning:'Bersin' },
+{ kanji:'息', furigana:'いき', meaning:'Napas' },
+{ kanji:'吐き気', furigana:'はきけ', meaning:'Mual' },
+{ kanji:'法律', furigana:'ほうりつ', meaning:'Hukum' },
+{ kanji:'発症数', furigana:'はっしょうすう', meaning:'Jumlah kasus' },
+{ kanji:'加工食品', furigana:'かこうしょくひん', meaning:'Makanan olahan' },
+{ kanji:'表示する', furigana:'ひょうじする', meaning:'Menampilkan/memberi label' },
+{ kanji:'義務', furigana:'ぎむ', meaning:'Tanggung jawab/kewajiban' },
+{ kanji:'特定原材料', furigana:'とくていげんざいりょう', meaning:'Bahan baku khusus' },
+{ kanji:'推奨', furigana:'すいしょう', meaning:'Rekomendasi/pengesahan' },
+{ kanji:'準ずる', furigana:'じゅんずる', meaning:'Berlaku/sesuai dengan' },
+{ kanji:'品目', furigana:'ひんもく', meaning:'Komoditas/barang' },
+{ kanji:'表示義務', furigana:'ひょうじぎむ', meaning:'Wajib diberi label' },
+{ kanji:'くるみ', furigana:'-', meaning:'Kacang kenari' },
+{ kanji:'小麦', furigana:'こむぎ', meaning:'Gandum' },
+{ kanji:'落花生(ピーナッツ)', furigana:'らっかせい', meaning:'Kacang' },
+{ kanji:'アーモンド', furigana:'ああもんど', meaning:'Kacang almon' },
+{ kanji:'あわび', furigana:'-', meaning:'Abalone' },
+{ kanji:'いか', furigana:'-', meaning:'Cumi-cumi' },
+{ kanji:'いくら', furigana:'-', meaning:'Telur salmon' },
+{ kanji:'カシューナッツ', furigana:'かしゅうなっつ', meaning:'Kacang mede' },
+{ kanji:'キウイフルーツ', furigana:'きういふるーつ', meaning:'Buah kiwi' },
+{ kanji:'ごま', furigana:'-', meaning:'Wijen' },
+{ kanji:'さば', furigana:'さば', meaning:'Ikan kembung' },
+{ kanji:'大豆', furigana:'だいず', meaning:'Kedalai' },
+{ kanji:'やまいも', furigana:'やまいも', meaning:'Ubi jepang' },
+{ kanji:'桃', furigana:'もも', meaning:'Peach' },
+{ kanji:'ゼラチン', furigana:'ぜらちん', meaning:'Gelatin/agar-agar' },
+{ kanji:'まな板', furigana:'まないた', meaning:'Talenan' },
+{ kanji:'包丁', furigana:'ほうちょう', meaning:'Pisau dapur' },
+{ kanji:'区別する', furigana:'くべつする', meaning:'Klasifikasi' },
+{ kanji:'防ぐ', furigana:'ふせぐ', meaning:'Mencegah' },
+{ kanji:'つく', furigana:'つく', meaning:'Mengenai' },
+{ kanji:'洗浄剤', furigana:'せんじょうざい', meaning:'Detergen' },
+{ kanji:'残る', furigana:'のこる', meaning:'Tersisa/tertinggal' },
+{ kanji:'洗い流す', furigana:'あらいながす', meaning:'Membilas' },
+{ kanji:'獲る', furigana:'とる', meaning:'Mendapat' },
+{ kanji:'冷蔵', furigana:'れいぞう', meaning:'Mendinginkan' },
+{ kanji:'冷凍', furigana:'れいとう', meaning:'Membekukan' },
+{ kanji:'条件', furigana:'じょうけん', meaning:'Keadaan/kondisi' },
+{ kanji:'保存する', furigana:'ほぞんする', meaning:'Pengawetan/mengawetkan' },
+{ kanji:'マグロ', furigana:'まぐろ', meaning:'Tuna' },
+{ kanji:'アジ', furigana:'あじ', meaning:'Makerel kuda' },
+{ kanji:'イワシ', furigana:'いわし', meaning:'Sarden' },
+{ kanji:'赤身魚', furigana:'あかみざかな', meaning:'Ikan berdaging merah' },
+{ kanji:'食中毒', furigana:'しょくちゅうどく', meaning:'Keracunan makanan' },
+{ kanji:'増える', furigana:'ふえる', meaning:'Bertambah' },
+{ kanji:'受け入れる', furigana:'うけいれる', meaning:'Penerimaan' },
+{ kanji:'緑色', furigana:'みどりいろ', meaning:'Warna hijau' },
+{ kanji:'皮', furigana:'かわ', meaning:'Kulit' },
+{ kanji:'おう吐', furigana:'おうと', meaning:'Muntah' },
+{ kanji:'下痢', furigana:'げり', meaning:'Diare' },
+{ kanji:'腹痛', furigana:'ふくつう', meaning:'Sakit perut' },
+{ kanji:'頭痛', furigana:'ずつう', meaning:'Sakit kepala' },
+{ kanji:'細菌', furigana:'さいきん', meaning:'Bakteri' },
+{ kanji:'ウイルス', furigana:'ういるす', meaning:'Virus' },
+{ kanji:'寄生虫', furigana:'きせいちゅう', meaning:'Parasit' },
+{ kanji:'カビ', furigana:'かび', meaning:'Jamur/lumut' },
+{ kanji:'病原性微生物', furigana:'びょうげんせいびせいぶつ', meaning:'Mikroba patogen' },
+{ kanji:'微生物', furigana:'びせいぶつ', meaning:'Mikroba/mikroorganisme' },
+{ kanji:'顕微鏡', furigana:'けんびきょう', meaning:'Mikroskop' },
+{ kanji:'食中毒菌', furigana:'しょくちゅうどくきん', meaning:'Bakteri penyebab keracunan makanan' },
+{ kanji:'カンピロバクター属菌', furigana:'かんぴろばくたーぞくきん', meaning:'Bakteri kampilobakter' },
+{ kanji:'サルモネラ属菌', furigana:'さるもねらぞくきん', meaning:'Bakteri salmonella' },
+{ kanji:'腸炎ビブリオ', font:'ちょうえんびぶりお', meaning:'Bakteri vibrio parahaemolyticus' },
+{ kanji:'腸管出血性大腸菌 (O157、O111 など)', furigana:'ちょうかんしゅっけつせいだいちょうきん', meaning:'E. Coli' },
+{ kanji:'黄色ブドウ球菌', furigana:'おうしょくぶどうきゅうきん', meaning:'Bakteri staphylococcus aureus' },
+{ kanji:'セレウス菌', furigana:'せれうすきん', meaning:'Bacillus cereus' },
+{ kanji:'ウェルシュ菌', furigana:'うぇるしゅきん', meaning:'Bakteri klostridium perfringens' },
+{ kanji:'ボツリヌス菌', furigana:'ぼつりぬすきん', meaning:'Bakteri klostridium botulinum' },
+{ kanji:'発症する', furigana:'はっしょうする', meaning:'Munculnya gejala/timbulnya penyakit' },
+{ kanji:'毒素', furigana:'どくそ', meaning:'Racun' },
+{ kanji:'皮膚', furigana:'ひふ', meaning:'Kulit' },
+{ kanji:'傷口', furigana:'きずぐち', meaning:'Luka' },
+{ kanji:'芽胞', furigana:'がほう', meaning:'Spora' },
+{ kanji:'鶏卵', furigana:'けいらん', meaning:'Telur' },
+{ kanji:'魚介類', furigana:'ぎょかいるい', meaning:'Produk laut/seafood' },
+{ kanji:'井戸水', furigana:'いどみず', meaning:'Air sumur' },
+{ kanji:'穀物加工品', furigana:'こくもつかこうひん', meaning:'Produk biji-bijian olahan' },
+{ kanji:'炒飯', furigana:'ちゃーはん', meaning:'Nasi goreng' },
+{ kanji:'ツチュー', furigana:'つちゅう', meaning:'Stew/rebusan' },
+{ kanji:'瓶詰め', furigana:'びんづめ', meaning:'Pembotolan' },
+{ kanji:'レトルト食品', furigana:'れとるとしょくひん', meaning:'Makanan retort (dikemas dan disterilkan)' },
+{ kanji:'発熱', furigana:'はつねつ', meaning:'Demam' },
+{ kanji:'激しい', furigana:'はげしい', meaning:'Parah/tanpa henti' },
+{ kanji:'血便', furigana:'けつべん', meaning:'Tinja berdarah' },
+{ kanji:'呼吸困難', furigana:'こきゅうこんなん', meaning:'Sulit bernapas' },
+{ kanji:'被る', furigana:'かぶる', meaning:'Tertutup/memakai' },
+{ kanji:'種', furigana:'たね', meaning:'Biji' },
+{ kanji:'通常', furigana:'つうじょう', meaning:'Umum/lazim' },
+{ kanji:'乾燥', furigana:'かんそう', meaning:'Pengeringan' },
+{ kanji:'育ちにくい', furigana:'そだちにくい', meaning:'Lambat/sulit tumbuh/berkembang' },
+{ kanji:'環境', furigana:'かんきょう', meaning:'Lingkungan' },
+{ kanji:'一部', furigana:'いちぶ', meaning:'Satu bagian' },
+{ kanji:'生き残る', furigana:'いきのこる', meaning:'Bertahan hidup' },
+{ kanji:'発生する', furigana:'はっせいする', meaning:'Memunculkan/membangkitkan' },
+{ kanji:'予防', furigana:'よぼう', meaning:'Pencegahan' },
+{ kanji:'つけない', furigana:'-', meaning:'Jangan mencemari' },
+{ kanji:'増やさない', furigana:'ふやさない', meaning:'Jangan menambah' },
+{ kanji:'やっつける(殺す)', furigana:'やっつける(ころす)', meaning:'Membunuh' },
+{ kanji:'清潔', furigana:'せいけつ', meaning:'Bersih/kebersihan/sanitasi' },
+{ kanji:'水分', furigana:'すいぶん', meaning:'Kelembaban' },
+{ kanji:'栄養', furigana:'えいよう', meaning:'Nutrisi' },
+{ kanji:'湿度', furigana:'しつど', meaning:'Tingkat kelembaban' },
+{ kanji:'好む', furigana:'このむ', meaning:'Menyukai/lebih disukai' },
+{ kanji:'一方', furigana:'いっぽう', meaning:'Sedangkan' },
+{ kanji:'低温', furigana:'ていおん', meaning:'Suhu rendah' },
+{ kanji:'加熱する', furigana:'かねつする', meaning:'Memanaskan' },
+{ kanji:'牡蠣', furigana:'かき', meaning:'Tiram' },
+{ kanji:'二枚貝', furigana:'にまいがい', meaning:'Bivalvia (sejenis moluska)' },
+{ kanji:'汚染する', furigana:'おせんする', meaning:'Mengontaminasi' },
+{ kanji:'感染する', furigana:'かんせんする', meaning:'Terinfeksi/menginfeksi' },
+{ kanji:'腸', furigana:'ちょう', meaning:'Usus/perut' },
+{ kanji:'大便', furigana:'だいべん', meaning:'Kotoran/tinja' },
+{ kanji:'吐く', furigana:'はく', meaning:'Memuntahkan' },
+{ kanji:'しっかり', furigana:'-', meaning:'Sepenuhnya/dengan baik' },
+{ kanji:'中心温度', furigana:'ちゅうしんおんど', meaning:'Suhu pusat/sentral' },
+{ kanji:'消毒', furigana:'しょうどく', meaning:'Sterilisasi/disinfeksi' },
+{ kanji:'濃度', furigana:'のうど', meaning:'Densitas/konsentrasi' },
+{ kanji:'次亜塩素酸ナトリウム', furigana:'じあえんそさんなとりうむ', meaning:'Natrium hipoklorit' },
+{ kanji:'溶液', furigana:'ようえき', meaning:'Larutan (cairan)' },
+{ kanji:'布巾', furigana:'ふきん', meaning:'Kain lap piring' },
+{ kanji:'拭く', furigana:'ふく', meaning:'Mengelap/mengeringkan' },
+{ kanji:'原則', furigana:'げんそく', meaning:'Prinsip' },
+{ kanji:'対策', furigana:'たいさく', meaning:'Ketentuan' },
+{ kanji:'有効', furigana:'ゆうこう', meaning:'Sah/efektif' },
+{ kanji:'持ち込む', furigana:'もちこむ', meaning:'Membawa masuk' },
+{ kanji:'確認する', furigana:'かくにんする', meaning:'Memverifikasi/mengonfirmasi' },
+{ kanji:'専門用具', furigana:'せんもんようぐ', meaning:'Peralatan khusus/spesialis' },
+{ kanji:'広げない', furigana:'ひろげない', meaning:'Tidak menyebarkan' },
+{ kanji:'増殖する', furigana:'ぞうしょくする', meaning:'Berkembang biak' },
+{ kanji:'胞子', furigana:'ほうし', meaning:'Spora' },
+{ kanji:'存在', furigana:'そんざい', meaning:'Keberadaan' },
+{ kanji:'完全', furigana:'かんぜん', meaning:'Lengkap/sempurna' },
+{ kanji:'穀類', furigana:'こくるい', meaning:'Biji-bijian' },
+{ kanji:'生える', furigana:'はえる', meaning:'Tumbuh/muncul' },
+{ kanji:'表面', furigana:'ひょうめん', meaning:'Permukaan/luar' },
+{ kanji:'体内', furigana:'たいない', meaning:'Bagian dalam tubuh' },
+{ kanji:'寄生する', furigana:'きせいする', meaning:'Parasitisme' },
+{ kanji:'共通する', furigana:'きょうつうする', meaning:'Saling/umum' },
+{ kanji:'説明する', furigana:'せつめいする', meaning:'Menjelaskan' },
+{ kanji:'整理', furigana:'せいり', meaning:'Pengorganisasian' },
+{ kanji:'整頓', furigana:'せいとん', meaning:'Merapikan' },
+{ kanji:'清掃', furigana:'せいそう', meaning:'Pembersihan' },
+{ kanji:'習慣付け', furigana:'しゅうかんづけ', meaning:'Membiasakan diri' },
+{ kanji:'しつけ', furigana:'-', meaning:'Disiplin/pendisiplinan' },
+{ kanji:'要らない', furigana:'いらない', meaning:'Tidak dibutuhkan/diperlukan' },
+{ kanji:'道具', furigana:'どうぐ', meaning:'Alat' },
+{ kanji:'取り出せる', furigana:'とりだせる', meaning:'Dikeluarkan' },
+{ kanji:'順序', furigana:'じゅんじょ', meaning:'Urutan/prosedur' },
+{ kanji:'数量', furigana:'すうりょう', meaning:'Jumlah' },
+{ kanji:'磨く', furigana:'みがく', meaning:'Menyikat' },
+{ kanji:'状態', furigana:'じょうたい', meaning:'Keadaan/kondisi' },
+{ kanji:'汚れ', furigana:'よごれ', meaning:'Kotoran' },
+{ kanji:'見た目', furigana:'みため', meaning:'Penampilan' },
+{ kanji:'実行', furigana:'じっこう', meaning:'Menjalankan/mengimplementasikan' },
+{ kanji:'保つ', furigana:'たもつ', meaning:'Menjaga/memelihara' },
+{ kanji:'役立つ', furigana:'やくだつ', meaning:'Berguna/bermanfaat/membantu' },
+{ kanji:'さまざま', furigana:'-', meaning:'Bermacam-macam/berbagai' },
+{ kanji:'触れる', furigana:'ふれる', meaning:'Bersentuhan' },
+{ kanji:'交差汚染', furigana:'こうさおせん', meaning:'Kontaminasi silang' },
+{ kanji:'使い分ける', furigana:'つかいわける', meaning:'Menggunakan dengan benar/sesuai' },
+{ kanji:'区分', furigana:'くぶん', meaning:'Pembagian/klasifikasi' },
+{ kanji:'清潔作業区域', furigana:'せいけつさぎょうくいき', meaning:'Zona/area kerja bersih' },
+{ kanji:'準清潔作業区域', furigana:'じゅんせいけつさぎょうくいき', meaning:'Zona/area kerja semi bersih' },
+{ kanji:'汚染作業区域', furigana:'おせんさぎょうくいき', meaning:'Zona/area kerja terkontaminasi' },
+{ kanji:'取り扱う', furigana:'とりあつかう', meaning:'Menangani' },
+{ kanji:'区域', furigana:'くいき', meaning:'Zona/area' },
+{ kanji:'盛り付け', furigana:'もりつけ', meaning:'Penyajian/pengaturan' },
+{ kanji:'包装', furigana:'ほうそう', meaning:'Pengemasan/pembungkusan' },
+{ kanji:'出荷する', furigana:'しゅっかする', meaning:'Pengiriman1' },
+{ kanji:'段ボール箱', furigana:'だんぼーるばこ', meaning:'Kotak kardus/karton (bisa dipakai kembali)' },
+{ kanji:'詰める', furigana:'つめる', meaning:'Memasukkan/mengemas' },
+{ kanji:'通る', furigana:'とおる', meaning:'Melalui/melewati' },
+{ kanji:'不要', furigana:'ふよう', meaning:'Tidak perlu/dibutuhkan' },
+{ kanji:'掃除', furigana:'そうじ', meaning:'Menyapu/membersihkan' },
+{ kanji:'通路', furigana:'つうろ', meaning:'Jalan/lorong' },
+{ kanji:'定期的', furigana:'ていきてき', meaning:'Teratur/rutin/berkala' },
+{ kanji:'衛生状況', furigana:'えいせいじょうきょう', meaning:'Kondisi kebersihan' },
+{ kanji:'排水溝', furigana:'はいすいこう', meaning:'Drainase/selokan' },
+{ kanji:'発生源', furigana:'はっせいげん', meaning:'Sumber/asal' },
+{ kanji:'外す', furigana:'はずす', meaning:'Melepas' },
+{ kanji:'床', furigana:'ゆか', meaning:'Lantai' },
+{ kanji:'濡れる', furigana:'ぬれる', meaning:'Basah' },
+{ kanji:'分解', furigana:'ぶんかい', meaning:'Dibongkar' },
+{ kanji:'目立つ', furigana:'めだつ', meaning:'Mencolok/menonjol' },
+{ kanji:'刃', furigana:'は', meaning:'Ujung/cabang' },
+{ kanji:'直接', furigana:'ちょくせつ', meaning:'Langsung/segera' },
+{ kanji:'たわし', furigana:'-', meaning:'Sikat penggosok' },
+{ kanji:'ぞうきん', furigana:'-', meaning:'Kain debu' },
+{ kanji:'水切りワイパー', furigana:'みずきりわいばあ', meaning:'Deck brush (sikat dek)' },
+{ kanji:'健康診断', furigana:'けんこうしんだん', meaning:'Pemeriksaan fisik' },
+{ kanji:'検便', furigana:'けんべん', meaning:'Pemeriksaan tinja/feses' },
+{ kanji:'更衣室', furigana:'こういしつ', meaning:'Ruang ganti' },
+{ kanji:'爪', furigana:'つめ', meaning:'Kuku' },
+{ kanji:'つけ爪', furigana:'つけつめ', meaning:'Kuku palsu' },
+{ kanji:'指輪', furigana:'ゆびわ', meaning:'Cincin' },
+{ kanji:'腕輪', furigana:'うでわ', meaning:'Gelang' },
+{ kanji:'頭髪', furigana:'とうはつ', meaning:'Rambut' },
+{ kanji:'留める', furigana:'とめる', meaning:'Mengencangkan' },
+{ kanji:'服装', furigana:'ふくそう', meaning:'Pakaian' },
+{ kanji:'袖', furigana:'そで', meaning:'Lengan' },
+{ kanji:'まくる', furigana:'-', meaning:'Menggulung' },
+{ kanji:'脱ぐ', furigana:'ぬぐ', meaning:'Melepas/menanggalkan' },
+{ kanji:'粘着ローラー', furigana:'ねんちゃくろーらあ', meaning:'Rol perekat' },
+{ kanji:'エアーシャワー', furigana:'えああしゃわあ', meaning:'Air shower (pancuran udara)' },
+{ kanji:'履物', furigana:'はきもの', meaning:'Alas kaki' },
+{ kanji:'履き替える', furigana:'はきかえる', meaning:'Mengganti/memakai' },
+{ kanji:'内側', furigana:'うちがわ', meaning:'Bagian dalam' },
+{ kanji:'襟', furigana:'えり', meaning:'Kerah' },
+{ kanji:'付着', furigana:'ふちゃく', meaning:'Menempel/melekat' },
+{ kanji:'縦襟', furigana:'たてえり', meaning:'Kerah vertikal' },
+{ kanji:'裾', furigana:'すそ', meaning:'Ujung baju/keliman' },
+{ kanji:'絞り', furigana:'しぼり', meaning:'Pencekik/pengerut' },
+{ kanji:'使用', furigana:'しよう', meaning:'Penggunaan' },
+{ kanji:'端', furigana:'はし', meaning:'Ujung' },
+{ kanji:'履く', furigana:'はく', meaning:'Mengenakan/memakai' },
+{ kanji:'注意事項', furigana:'ちゅういじこう', meaning:'Hal-hal yang harus diperhatikan/petunjuk' },
+{ kanji:'はみだす', furigana:'-', meaning:'Mencuat/menonjol' },
+{ kanji:'束ねる', furigana:'たばねる', meaning:'Diikat' },
+{ kanji:'あご', furigana:'-', meaning:'Dagu' },
+{ kanji:'隙間', furigana:'すきま', meaning:'Celah' },
+{ kanji:'針金', furigana:'はりがね', meaning:'Kawat' },
+{ kanji:'直前', furigana:'ちょくぜん', meaning:'Tepat sebelum' },
+{ kanji:'非汚染作業区域', furigana:'ひおせんさぎょうくいき', meaning:'Zona/area kerja tidak terkontaminasi' },
+{ kanji:'移動する', furigana:'いどうする', meaning:'Berpindah' },
+{ kanji:'流水', furigana:'りゅうすい', meaning:'Air mengalir' },
+{ kanji:'せっけん', furigana:'-', meaning:'Sabun' },
+{ kanji:'手首', furigana:'てくび', meaning:'Pergelangan tangan' },
+{ kanji:'使い捨て', furigana:'つかいて', meaning:'Sekali pakai' },
+{ kanji:'乾かす', furigana:'かわかす', meaning:'Mengeringkan' },
+{ kanji:'消毒用アルコール', furigana:'しょうどくようあるこーる', meaning:'Alkohol gosok/untuk sterilisasi' },
+{ kanji:'両手', furigana:'りょうて', meaning:'Kedua tangan' },
+{ kanji:'吹きつけ', furigana:'ふきつけ', meaning:'Menyemprot' },
+{ kanji:'すりこむ', furigana:'-', meaning:'Menggosok' },
+{ kanji:'交換', furigana:'こうかん', meaning:'Penggantian' },
+{ kanji:'徹底', furigana:'てってい', meaning:'Penegakan menyeluruh' },
+{ kanji:'休憩', furigana:'きゅうけい', meaning:'Istirahat' },
+{ kanji:'殺菌済み', furigana:'さっきんずみ', meaning:'Disterilisasi' },
+{ kanji:'装置', furigana:'そうち', meaning:'Peralatan' },
+{ kanji:'不備', furigana:'ふび', meaning:'Cacat' },
+{ kanji:'たんや', furigana:'-', meaning:'Dahak' },
+{ kanji:'つば', furigana:'-', meaning:'Ludah' },
+{ kanji:'財布', furigana:'さいふ', meaning:'Dompet' },
+{ kanji:'関係', furigana:'かんけい', meaning:'Hubungan' },
+{ kanji:'持ち物', furigana:'もちもの', meaning:'Barang pribadi' },
+{ kanji:'ホチキスの針', furigana:'ほちきすのはり', meaning:'Staples (untuk menjepret)' },
+{ kanji:'書類', furigana:'しょるい', meaning:'Dokumen' },
+{ kanji:'鉛筆', furigana:'えんぴつ', meaning:'Pensil' },
+{ kanji:'折れた芯', furigana:'おれたしん', meaning:'Patahan ujung pensil' },
+{ kanji:'臭い', furigana:'におい', meaning:'Bau' },
+{ kanji:'品質', furigana:'ひんしつ', meaning:'Kualitas' },
+{ kanji:'影響', furigana:'えいきょう', meaning:'Pengaruh/dampak' },
+{ kanji:'香水', furigana:'こうすい', meaning:'Parfum' },
+{ kanji:'禁止する', furigana:'きんしする', meaning:'Melarang' },
+{ kanji:'意図的', furigana:'いとてき', meaning:'Dengan sengaja' },
+{ kanji:'出入り', furigana:'でいり', meaning:'Keluar masuk' },
+{ kanji:'記録する', furigana:'きろく', meaning:'Mencatat' },
+{ kanji:'倉庫', furigana:'そうこ', meaning:'Gudang/tempat penyimpanan' },
+{ kanji:'外部', furigana:'がいぶ', meaning:'Luar' },
+{ kanji:'注文', furigana:'ちゅうもん', meaning:'Pesanan/permintaan' },
+{ kanji:'照らし合わせる', furigana:'てらしあわせる', meaning:'Memeriksa/membandingkan' },
+{ kanji:'受入検査', furigana:'うけいれけんさ', meaning:'Uji penerimaan' },
+{ kanji:'規格', furigana:'きかく', meaning:'Standar' },
+{ kanji:'期限', furigana:'きげん', meaning:'Batas waktu/tenggat waktu' },
+{ kanji:'品温', furigana:'ひんおん', meaning:'Batas suhu' },
+{ kanji:'腐敗する', furigana:'ふはいする', meaning:'Membusuk' },
+{ kanji:'過ぎる', furigana:'すぎる', meaning:'Melebihi/melewati' },
+{ kanji:'主な', furigana:'おもな', meaning:'Utama' },
+{ kanji:'異なる', furigana:'ことなる', meaning:'Bervariasi' },
+{ kanji:'米穀類(コメ)', furigana:'べいこくるい', meaning:'Biji-bijian padi' },
+{ kanji:'穀類加工品(小麦粉、デンプン)', furigana:'こくるいかこうひん(こむぎこ、でんぷん)', meaning:'Produk sereal olahan (tepung terigu, pati makanan)' },
+{ kanji:'食塩', furigana:'しょくえん', meaning:'Garam meja' },
+{ kanji:'食酢', furigana:'しょくす', meaning:'Cuka' },
+{ kanji:'生鮮魚介類', furigana:'せいせんぎょかいるい', meaning:'Makanan laut segar/fresh seafood' },
+{ kanji:'液状油脂', furigana:'えきじょうゆし', meaning:'Lemak cair' },
+{ kanji:'固形油脂', furigana:'こけいゆし', meaning:'Lemak padat' },
+{ kanji:'殻付き卵', furigana:'からつきたまご', meaning:'Telur mentah (masih bercangkang)' },
+{ kanji:'液卵', furigana:'えきらん', meaning:'Telur mentah (cangkang retak)' },
+{ kanji:'凍結卵', furigana:'とうけつらん', meaning:'Telur beku' },
+{ kanji:'生鮮果実', furigana:'せいせんかじつ', meaning:'Buah segar' },
+{ kanji:'濃縮乳', furigana:'のうしゅくにゅう', meaning:'Susu kondensasi/konsentrat' },
+{ kanji:'脱脂乳', furigana:'だっしにゅう', meaning:'Susu skim' },
+{ kanji:'練乳', furigana:'れんにゅう', meaning:'Susu kental manis' },
+{ kanji:'容器', furigana:'ようき', meaning:'Wadah/kemasan' },
+{ kanji:'指定する', furigana:'していする', meaning:'Menunjuk pada' },
+{ kanji:'詰め込む', furigana:'つめこむ', meaning:'Dimasukkan ke dalam kemasan' },
+{ kanji:'冷気', furigana:'れいき', meaning:'Udara dingin' },
+{ kanji:'互い', furigana:'たがい', meaning:'Satu sama lain' },
+{ kanji:'節電', furigana:'せつでん', meaning:'Pemadaman listrik' },
+{ kanji:'冷やし合う', furigana:'ひやしあう', meaning:'Pertemuan dingin' },
+{ kanji:'測定', furigana:'そくてい', meaning:'Mengukur' },
+{ kanji:'結果', furigana:'けっか', meaning:'Hasil' },
+{ kanji:'食品衛生法', furigana:'しょくひんえいせいほう', meaning:'Undang-undang kebersihan makanan' },
+{ kanji:'棚', furigana:'たな', meaning:'Rak' },
+{ kanji:'使用期限', furigana:'しようきげん', meaning:'Batas waktu penggunaan' },
+{ kanji:'賞味期限', furigana:'しょうみきげん', meaning:'Tanggal "best before"' },
+{ kanji:'消費期限', furigana:'しょうひきげん', meaning:'Tanggal kedaluwarsa' },
+{ kanji:'期間', furigana:'きかん', meaning:'Periode/jangka waktu' },
+{ kanji:'それぞれ', furigana:'それぞれ', meaning:'Masing-masing' },
+{ kanji:'袋', furigana:'ふくろ', meaning:'Kantong/karung' },
+{ kanji:'企業', furigana:'きぎょう', meaning:'Perusahaan/korporasi' },
+{ kanji:'未開封', furigana:'みかいふう', meaning:'Tersegel' },
+{ kanji:'美味しい', furigana:'おいしい', meaning:'Enak' },
+{ kanji:'可能性', furigana:'かのうせい', meaning:'Kemungkinan' },
+{ kanji:'絶対に', furigana:'ぜったいに', meaning:'Mutlak/benar-benar' },
+{ kanji:'納品する', furigana:'のうひんする', meaning:'Pengiriman' },
+{ kanji:'先入れ、先出し', furigana:'さきいれ、さきだし', meaning:'Pertama masuk, pertama keluar (FIFO/first in, first out)' },
+{ kanji:'開封', furigana:'かいふう', meaning:'Membuka segel' },
+{ kanji:'クラフト紙', furigana:'くらふとし', meaning:'Kertas craft/kerajinan' },
+{ kanji:'包装材料', furigana:'ほうそうざいりょう', meaning:'Bahan kemasan' },
+{ kanji:'誤る', furigana:'あやまる', meaning:'Secara tidak sengaja' },
+{ kanji:'切れ端', furigana:'きれはし', meaning:'Fragmen/potongan' },
+{ kanji:'工夫', furigana:'くふう', meaning:'Skema/rencana' },
+{ kanji:'切れ口', furigana:'きれくち', meaning:'Ujung yang dipotong/bukaan/celah' },
+{ kanji:'解凍', furigana:'かいとう', meaning:'Pencairan' },
+{ kanji:'加温', furigana:'かおん', meaning:'Pemanasan' },
+{ kanji:'自然解凍', furigana:'しぜんかいとう', meaning:'Pencairan alami' },
+{ kanji:'水道', furigana:'すいどう', meaning:'Saluran/aliran air' },
+{ kanji:'あてて', furigana:'-', meaning:'Menerapkan' },
+{ kanji:'汁(ドリップ)', furigana:'しる(どりっぷ)', meaning:'Drip/tetesan' },
+{ kanji:'網目トレー', furigana:'あみめとれえ', meaning:'Nampan jaring' },
+{ kanji:'載せて解凍用', furigana:'のせてかいとうよう', meaning:'Meletakkan untuk pencairan' },
+{ kanji:'密閉する', furigana:'みっぺいする', meaning:'Menutup rapat' },
+{ kanji:'穴', furigana:'あな', meaning:'Lubang' },
+{ kanji:'移し替える', furigana:'うつしかえる', meaning:'Memindah/menukar' },
+{ kanji:'固形', furigana:'こけい', meaning:'Padat' },
+{ kanji:'柔らかい', furigana:'やわらかい', meaning:'Lunak' },
+{ kanji:'劣化する', furigana:'れっかする', meaning:'Menurun/degradasi' },
+{ kanji:'適正', furigana:'てきせい', meaning:'Cocok/sesuai' },
+{ kanji:'食塩水', furigana:'しょくえんすい', meaning:'Air garam' },
+{ kanji:'分別', furigana:'ぶんべつ', meaning:'Pemisahan' },
+{ kanji:'裁断', furigana:'さいだん', meaning:'Pemotongan' },
+{ kanji:'うろこ', furigana:'うろこ', meaning:'Sisik' },
+{ kanji:'ヒレ', furigana:'ひれ', meaning:'Sirip' },
+{ kanji:'X線異物検出機', furigana:'Xせんいぶつけんしゅつき', meaning:'Detektor benda asing sinar X' },
+{ kanji:'混合', furigana:'こんごう', meaning:'Pencampuran' },
+{ kanji:'成形', furigana:'せいけい', meaning:'Pembentukan/pencetakan' },
+{ kanji:'配管', furigana:'はいかん', meaning:'Pipa ledeng/perpipaan' },
+{ kanji:'お湯', furigana:'おゆ', meaning:'Air panas' },
+{ kanji:'ていねい', furigana:'ていねい', meaning:'Cermat/teliti' },
+{ kanji:'消化', furigana:'しょうか', meaning:'Pencernaan' },
+{ kanji:'芽胞菌', furigana:'がほうきん', meaning:'Bakteri pembentuk spora' },
+{ kanji:'設定する', furigana:'せっていする', meaning:'Mengatur' },
+{ kanji:'かたまり', furigana:'かたまり', meaning:'Gumpalan' },
+{ kanji:'確かめる', furigana:'たしかめる', meaning:'Memastikan' },
+{ kanji:'冷却', furigana:'れいきゃく', meaning:'Pendinginan' },
+{ kanji:'具体的', furigana:'ぐたいてき', meaning:'Secara nyata' },
+{ kanji:'処理する', furigana:'しょりする', meaning:'Penanganan/perawatan/pemrosesan' },
+{ kanji:'生鮮食品', furigana:'せいせんしょくひん', meaning:'Makanan yang mudah rusak/busuk' },
+{ kanji:'凍らせる', furigana:'こおらせる', meaning:'Pembekuan' },
+{ kanji:'凍結', furigana:'とうけつ', meaning:'Pembekuan' },
+{ kanji:'弾力', furigana:'だんりょく', meaning:'Elastisitas' },
+{ kanji:'食感', furigana:'しょっかん', meaning:'Tekstur makanan' },
+{ kanji:'風味', furigana:'ふうみ', meaning:'Cita rasa' },
+{ kanji:'短時間', furigana:'たんじかん', meaning:'Waktu pendek/singkat' },
+{ kanji:'急速', furigana:'きゅうそく', meaning:'Cepat/segera' },
+{ kanji:'充填', furigana:'じゅうてん', meaning:'Pengisian' },
+{ kanji:'検査', furigana:'けんさ', meaning:'Inspeksi/pemeriksaan' },
+{ kanji:'印字する', furigana:'いんじする', meaning:'Mencetak' },
+{ kanji:'数字', furigana:'すうじ', meaning:'Digit angka' },
+{ kanji:'間違える', furigana:'まちがえる', meaning:'Salah/keliru' },
+{ kanji:'内容', furigana:'ないよう', meaning:'Konten/detail isi' },
+{ kanji:'中身', furigana:'なかみ', meaning:'Isian' },
+{ kanji:'金属探知機', furigana:'きんぞくたんちき', meaning:'Detektor logam' },
+{ kanji:'探知', furigana:'たんち', meaning:'Deteksi' },
+{ kanji:'正常', furigana:'せいじょう', meaning:'Normal/wajar' },
+{ kanji:'機能する', furigana:'きのうする', meaning:'Berfungsi' },
+{ kanji:'時点', furigana:'じてん', meaning:'Titik waktu/kejadian' },
+{ kanji:'検出する', furigana:'けんしゅつする', meaning:'Mendeteksi' },
+{ kanji:'数量不足', furigana:'すうりょうふそく', meaning:'Kekurangan jumlah/kuantitas' },
+{ kanji:'形状不良品', furigana:'けいじょうふりょうひん', meaning:'Produk tidak sesuai bentuk' },
+{ kanji:'頼る', furigana:'たよる', meaning:'Mengandalkan' },
+{ kanji:'項目', furigana:'こうもく', meaning:'Item/kategori' },
+{ kanji:'自主的', furigana:'じしゅてき', meaning:'Secara sukarela/mandiri' },
+{ kanji:'一般生菌数', furigana:'いっぱんせいきんすう', meaning:'Jumlah bakteri yang dapat hidup secara umum' },
+{ kanji:'大腸菌', furigana:'だいちょうきん', meaning:'E. Coli' },
+{ kanji:'大腸菌群', furigana:'だいちょうきんぐん', meaning:'Kelompok E. Coli' },
+{ kanji:'配送', furigana:'はいそう', meaning:'Mengirim' },
+{ kanji:'一定', furigana:'いってい', meaning:'Ditetapkan/diatur' },
+{ kanji:'割合', furigana:'わりあい', meaning:'Persentase/rasio/proporsi' },
+{ kanji:'抜き出す', furigana:'ぬきだす', meaning:'Memilih/menarik' },
+{ kanji:'輸送する', furigana:'ゆそうする', meaning:'Pengangkutan/mengangkut' },
+{ kanji:'特別', furigana:'とくべつ', meaning:'Khusus' },
+{ kanji:'仕組み', furigana:'しくみ', meaning:'Mekanisme/susunan/rancangan' },
+{ kanji:'基準', furigana:'きじゅん', meaning:'Standar' },
+{ kanji:'管理基準', furigana:'かんりきじゅん', meaning:'Batas kritis' },
+{ kanji:'監視する(モニタリング)', furigana:'かんしする', meaning:'Memantau/mengawasi' },
+{ kanji:'確実に', furigana:'かくじつ', meaning:'Keandalan' },
+{ kanji:'従う', furigana:'したがう', meaning:'Mengikuti/mematuhi' },
+{ kanji:'運用する', furigana:'うんようする', meaning:'Penerapan' },
+{ kanji:'判断する', furigana:'はんだんする', meaning:'Menyimpulkan/menilai' },
+{ kanji:'決定', furigana:'けってい', meaning:'Penentuan' },
+{ kanji:'状況', furigana:'じょうきょう', meaning:'Kondisi/keadaan' },
+{ kanji:'改善措置', furigana:'かいぜんそち', meaning:'Tindakan perbaikan/peningkatan' },
+{ kanji:'逸脱する', furigana:'いつだつする', meaning:'Menyimpang/melalaikan' },
+{ kanji:'検証方法', furigana:'けんしょうほうほう', meaning:'Metode/cara verifikasi' },
+{ kanji:'除去', furigana:'じょきょ', meaning:'Penyingkiran/penghapusan' },
+{ kanji:'低減', furigana:'ていげん', meaning:'Penurunan/pengurangan' },
+{ kanji:'文書', furigana:'ぶんしょ', meaning:'Dokumen/catatan/kertas' },
+{ kanji:'実際', furigana:'じっさい', meaning:'Sebenarnya' },
+{ kanji:'違ってくる', furigana:'ちがってくる', meaning:'Bervariasi' },
+{ kanji:'参照する', furigana:'さんしょうする', meaning:'Referensi/merujuk' },
+{ kanji:'指示', furigana:'しじ', meaning:'Arahan/petunjuk' },
+{ kanji:'速度', furigana:'そくど', meaning:'Kecepatan' },
+{ kanji:'調整する', furigana:'ちょうせいする', meaning:'Menyesuaikan/menyetel' },
+{ kanji:'加熱不足', furigana:'かねつぶそく', meaning:'Kekurangan/defisiensi panas' },
+{ kanji:'廃棄する', furigana:'はいきする', meaning:'Membuang' },
+{ kanji:'実施する', furigana:'じっしする', meaning:'Menegakkan/memberlakukan' },
+{ kanji:'検証する', furigana:'けんしょうする', meaning:'Menginspeksi/memverifikasi' },
+{ kanji:'管理手段', furigana:'かんりしゅだん', meaning:'Sarana kontrol' },
+{ kanji:'手順', furigana:'てじゅん', meaning:'Prosedur/urutan/protokol' },
+{ kanji:'あらかじめ', furigana:'-', meaning:'Sebelumnya' },
+{ kanji:'事実', furigana:'じじつ', meaning:'Fakta/kebenaran' },
+{ kanji:'経験', furigana:'けいけん', meaning:'Pengalaman' },
+{ kanji:'未熟練作業者', furigana:'みじゅくれんさぎょうしゃ', meaning:'Pekerja tidak terampil' },
+{ kanji:'未満', furigana:'みまん', meaning:'Kurang dari' },
+{ kanji:'死傷者', furigana:'ししょうしゃ', meaning:'Korban jiwa (tewas/luka)' },
+{ kanji:'占める', furigana:'しめる', meaning:'Mempertanggung jawabkan/mengambil' },
+{ kanji:'転倒', furigana:'てんとう', meaning:'Jatuh tersandung/terjungkal' },
+{ kanji:'はさまれ', furigana:'-', meaning:'Terjebak/terperangkap' },
+{ kanji:'巻き込まれ', furigana:'まきこまれ', meaning:'Terseret/tergulung' },
+{ kanji:'切れ', furigana:'きれ', meaning:'Terpotong' },
+{ kanji:'こすれ', furigana:'-', meaning:'Terkikis' },
+{ kanji:'墜落', furigana:'ついらく', meaning:'Tabrakan' },
+{ kanji:'転落', furigana:'てんらく', meaning:'Terjatuh' },
+{ kanji:'すべる', furigana:'-', meaning:'Tergelincir/terpeleset' },
+{ kanji:'つまずく', furigana:'-', meaning:'Menyandung/tersandung' },
+{ kanji:'背中', furigana:'せなか', meaning:'Punggung' },
+{ kanji:'打つ', furigana:'うつ', meaning:'Membentur/menabrak' },
+{ kanji:'つぶれる', furigana:'-', meaning:'Hancur/patah' },
+{ kanji:'折る', furigana:'おる', meaning:'Mematahkan' },
+{ kanji:'階段', furigana:'かいだん', meaning:'Tangga' },
+{ kanji:'おりる', furigana:'-', meaning:'Naik' },
+{ kanji:'はしご', furigana:'-', meaning:'Tangga' },
+{ kanji:'脚立', furigana:'きゃたつ', meaning:'Anak tangga' },
+{ kanji:'捻挫する', furigana:'ねんざする', meaning:'Keseleo/terpelintir' },
+{ kanji:'やけど', furigana:'-', meaning:'Terbakar/melepuh' },
+{ kanji:'全身', furigana:'ぜんしん', meaning:'Seluruh tubuh/badan' },
+{ kanji:'腰痛', furigana:'ようつう', meaning:'Sakit pinggang/nyeri pinggul' },
+{ kanji:'繰り返す', furigana:'くりかえす', meaning:'Mengulang/berulang-ulang' },
+{ kanji:'運ぶ', furigana:'はこぶ', meaning:'Mengangkut/memindahkan' },
+{ kanji:'熱中症', furigana:'ねっちゅうしょう', meaning:'Sengatan panas' },
+{ kanji:'気温', furigana:'きおん', meaning:'Suhu udara' },
+{ kanji:'体温', furigana:'たいおん', meaning:'Suhu tubuh' },
+{ kanji:'塩分', furigana:'えんぶん', meaning:'Kadar garam' },
+{ kanji:'崩れる', furigana:'くずれる', meaning:'Merosot/menurun' },
+{ kanji:'体温調節', furigana:'たいおんちょうせつ', meaning:'Termoregulasi (tubuh)' },
+{ kanji:'激突', furigana:'げきとつ', meaning:'Tabrakan/benturan' },
+{ kanji:'無くす', furigana:'なくす', meaning:'Menghilangkan/menghapus' },
+{ kanji:'目標', furigana:'もくひょう', meaning:'Tujuan/sasaran' },
+{ kanji:'参加する', furigana:'さんかする', meaning:'Berpartisipasi/bergabung' },
+{ kanji:'枠', furigana:'わく', meaning:'Batas/kuota' },
+{ kanji:'沿って置く', furigana:'そっておく', meaning:'Diletakkan bersama' },
+{ kanji:'故障する', furigana:'こしょうする', meaning:'Rusak' },
+{ kanji:'感染症', furigana:'かんせんしょう', meaning:'Penularan/infeksi' },
+{ kanji:'まくり上げる', furigana:'まくり上げる', meaning:'Menggulung/menyelipkan' },
+{ kanji:'高所作業', furigana:'こうしょさぎょう', meaning:'Bekerja di ketinggian' },
+{ kanji:'保護メガネ', furigana:'ほごめがね', meaning:'Kacamata pengaman/keselamatan' },
+{ kanji:'薬品', furigana:'やくひん', meaning:'Obat-obatan/bahan kimia' },
+{ kanji:'微粉', furigana:'びふん', meaning:'Bubuk' },
+{ kanji:'高圧洗浄作業', furigana:'こうあつせんじょうさぎょう', meaning:'Pekerjaan pembersihan/pencucian' },
+{ kanji:'頭傷防止', furigana:'とうしょうぼうし', meaning:'Pencegahan cedera kepala' },
+{ kanji:'耳栓', furigana:'みみせん', meaning:'Earplug' },
+{ kanji:'騒音', furigana:'そうおん', meaning:'Kebisingan' },
+{ kanji:'発する', furigana:'はっする', meaning:'Mengeluarkan/menghasilkan' },
+{ kanji:'難聴', furigana:'なんちょう', meaning:'Gangguan pendengaran' },
+{ kanji:'防音', furigana:'ぼうおん', meaning:'Kedap suara' },
+{ kanji:'耐熱', furigana:'たいねつ', meaning:'Tahan panas' },
+{ kanji:'布', furigana:'ぬの', meaning:'Kain' },
+{ kanji:'切傷防止', furigana:'せっしょうぼうし', meaning:'Pencegahan luka potong' },
+{ kanji:'繊維', furigana:'せんい', meaning:'Serat' },
+{ kanji:'編み上げられる', furigana:'あみあげられる', meaning:'Tersusun/terajut' },
+{ kanji:'刃物', furigana:'はもの', meaning:'Alat bermata' },
+{ kanji:'耐切創手袋', furigana:'たいせっそうてぶくろ', meaning:'Sarung tangan tahan potong' },
+{ kanji:'一種', furigana:'いっしゅ', meaning:'Jenis' },
+{ kanji:'圧傷防止', furigana:'あつしょうぼうし', meaning:'Pencegahan luka himpitan/tekanan' },
+{ kanji:'つま先', furigana:'つまさき', meaning:'Ujung sepatu' },
+{ kanji:'かかと', furigana:'-', meaning:'Tumit' },
+{ kanji:'鋼板', furigana:'こうはん/こうばん', meaning:'Pelat baja' },
+{ kanji:'耐油', furigana:'たいゆ', meaning:'Tahan minyak' },
+{ kanji:'靴底', furigana:'くつぞこ', meaning:'Sol' },
+{ kanji:'上部', furigana:'じょうぶ', meaning:'Bagian atas/permukaan' },
+{ kanji:'横断方法', furigana:'おうだんほうほう', meaning:'Cara melintasi' },
+{ kanji:'くぐる', furigana:'-', meaning:'Masuk/melewati/menyelinap' },
+{ kanji:'指差呼称', furigana:'しさこしょう', meaning:'Menunjuk dan memanggil' },
+{ kanji:'共同', furigana:'きょうどう', meaning:'Kolaborasi/bersama' },
+{ kanji:'合図', furigana:'あいず', meaning:'Isyarat/tanda' },
+{ kanji:'よそ見', furigana:'よそみ', meaning:'Mengalihkan pandangan' },
+{ kanji:'工具', furigana:'こうぐ', meaning:'Alat' },
+{ kanji:'離れる', furigana:'はなれる', meaning:'Meninggalkan' },
+{ kanji:'信号', furigana:'しんごう', meaning:'Sinyal' },
+{ kanji:'標識', furigana:'ひょうしき', meaning:'Tanda' },
+{ kanji:'作業対象', furigana:'さぎょうたいしょう', meaning:'Sasaran/objek kerja' },
+{ kanji:'理解する', furigana:'りかいする', meaning:'Memahami' },
+{ kanji:'示す', furigana:'しめす', meaning:'Menunjukkan/menampilkan' },
+{ kanji:'落ち着く', furigana:'おちつく', meaning:'Tenang' },
+{ kanji:'始業前点検', furigana:'しぎょうまえてんけん', meaning:'Inspeksi/pengecekan sebelum mulai bekerja' },
+{ kanji:'異常', furigana:'いじょう', meaning:'Keanehan/gangguan/abnormal' },
+{ kanji:'安定', furigana:'あんてい', meaning:'Stabilitas/kemantapan' },
+{ kanji:'はさまる', furigana:'-', meaning:'Terjepit' },
+{ kanji:'振動', furigana:'しんどう', meaning:'Gerakan/ayunan/goyangan' },
+{ kanji:'部品', furigana:'ぶひん', meaning:'Komponen' },
+{ kanji:'動作確認', furigana:'どうさかくにん', meaning:'Memeriksa pengoperasian' },
+{ kanji:'裝置', furigana:'あんぜんそうち', meaning:'Perangkat keamanan' },
+{ kanji:'点灯', furigana:'てんとう', meaning:'Menyala' },
+{ kanji:'消灯', furigana:'しょうとう', meaning:'Padam/mati' },
+{ kanji:'異常時', furigana:'いじょうじ', meaning:'Kejadian/peristiwa abnormal' },
+{ kanji:'対応', furigana:'たいおう', meaning:'Tanggapan/reaksi' },
+{ kanji:'停止する', furigana:'ていしする', meaning:'Berhenti/terhenti' },
+{ kanji:'電源', furigana:'でんげん', meaning:'Sumber listrik' },
+{ kanji:'つまる', furigana:'-', meaning:'Penuh/tersumbat' },
+{ kanji:'刃先', furigana:'はさき', meaning:'Tepi/ujung mata pisau' },
+{ kanji:'回転', furigana:'かいてん', meaning:'Memutar' },
+{ kanji:'非常停止', furigana:'ひじょうていし', meaning:'Penghentian darurat' },
+{ kanji:'操作盤', furigana:'そうさばん', meaning:'Panel/papan kontrol' },
+{ kanji:'自動的', furigana:'じどうてき', meaning:'Otomatis' },
+{ kanji:'修理する', furigana:'しゅうりする', meaning:'Memperbaiki' },
+{ kanji:'回転部分', furigana:'かいてんぶぶん', meaning:'Rotator/pemutar' },
+{ kanji:'故障対応中', furigana:'こしょうたいおうちゅう', meaning:'Penanggulangan/penanganan kesalahan' },
+{ kanji:'ぶら下げる', furigana:'ぶらさげる', meaning:'Menggantung' },
+{ kanji:'うっかりする', furigana:'-', meaning:'Ceroboh/tanpa berpikir panjang' },
+{ kanji:'思い違い', furigana:'おもいちがい', meaning:'Salah paham' },
+{ kanji:'点検', furigana:'てんけん', meaning:'Pemeriksaan/pengecekan/inspeksi' },
+{ kanji:'整備', furigana:'せいび', meaning:'Pemeliharaan' },
+{ kanji:'生産', furigana:'せいさん', meaning:'Produksi' },
+{ kanji:'塩素', furigana:'えんそ', meaning:'Klorin' },
+{ kanji:'酸性洗剤', furigana:'さんせいせんざい', meaning:'Detergen asam' },
+{ kanji:'暗毒', furigana:'ゆうどく', meaning:'Beracun' },
+{ kanji:'高温', furigana:'こうおん', meaning:'Suhu tinggi' },
+{ kanji:'火災', furigana:'かさい', meaning:'Kebakaran' },
+{ kanji:'異常事態', furigana:'いじょうじたい', meaning:'Keadaan/kondisi darurat' },
+{ kanji:'行動', furigana:'こうどう', meaning:'Tindakan/perbuatan' },
+{ kanji:'勝手', furigana:'かって', meaning:'Egois' },
+{ kanji:'緊急停止ボタン', furigana:'きんきゅうていしぼたん', meaning:'Tombol pemadaman/penghentian darurat' },
+{ kanji:'あわてる', furigana:'-', meaning:'Terburu-buru/tergesa-gesa' },
+{ kanji:'二次災害', furigana:'にじさいがい', meaning:'Bencana sekunder' },
+{ kanji:'日頃', furigana:'ひごろ', meaning:'Secara normal/biasa' },
+{ kanji:'訓練する', furigana:'くんれんする', meaning:'Pelatihan/disiplin' },
+{ kanji:'避難訓練', furigana:'ひなんくんれん', meaning:'Latihan evakuasi' },
+{ kanji:'想定', furigana:'そうてい', meaning:'Pengandaian/simulasi' },
+{ kanji:'ぐらぐら', furigana:'-', meaning:'Goyang/tidak stabil' },
+{ kanji:'身につける', furigana:'みにつける', meaning:'Mempelajari/memperoleh pengetahuan' },
+{ kanji:'事例', furigana:'じれい', meaning:'Contoh/kasus' },
+{ kanji:'身近', furigana:'みじか', meaning:'Akrab' },
+{ kanji:'社内', furigana:'しゃない', meaning:'Dalam perusahaan' },
+{ kanji:'社外', furigana:'しゃがい', meaning:'Luar perusahaan' },
+{ kanji:'ヒヤリ・ハット', furigana:'ひやり・はっと', meaning:'Near miss/nyaris celaka' },
+{ kanji:'ハインリッヒの法則', furigana:'はいんりっひのほうそく', meaning:'Hukum Heinrich' },
+{ kanji:'体験', furigana:'たいけん', meaning:'Pengalaman pribadi' },
+{ kanji:'お互い', furigana:'おたがい', meaning:'Saling/satu sama lain' },
+{ kanji:'共有する', furigana:'きょうゆう', meaning:'Berbagi' },
+{ kanji:'出し合う', furigana:'だしあう', meaning:'Berkontribusi bersama' },
+{ kanji:'改善', furigana:'かいぜん', meaning:'Perbaikan/peningkatan' },
+{ kanji:'危険予知訓練', furigana:'きけんよちくんれん', meaning:'Pelatihan pencegahan bahaya' },
+{ kanji:'潜在的', furigana:'せんざいてき', meaning:'Laten/potensial' },
+{ kanji:'感電する', furigana:'かんでんする', meaning:'Tersengat listrik' },
+{ kanji:'腰を痛める', furigana:'こしをいためる', meaning:'Sakit punggung' },
+{ kanji:'酸欠になる', furigana:'さんけつになる', meaning:'Kekurangan oksigen' },
+{ kanji:'当たる', furigana:'あたる', meaning:'Memar' },
+{ kanji:'ころぶ', furigana:'-', meaning:'Terguling/jatuh' },
+{ kanji:'有害物にやられる', furigana:'ゆうがいぶつにやられる', meaning:'Terkena zat beracun' },
+{ kanji:'抜ける', furigana:'ぬける', meaning:'Hilang/pudar' },
+{ kanji:'くずれる', furigana:'-', meaning:'Runtuh/hancur/rusak' },
+{ kanji:'漏れる', furigana:'もれる', meaning:'Bocor' },
+{ kanji:'様子', furigana:'ようす', meaning:'Kondisi/keadaan' },
+{ kanji:'姿勢', furigana:'しせい', meaning:'Posisi/sikap/pembawaan' },
+{ kanji:'警戒', furigana:'けいかい', meaning:'Kewaspadaan' },
+{ kanji:'積まれる', furigana:'つまれる', meaning:'Menumpuk' },
+{ kanji:'きちんと', furigana:'-', meaning:'Dengan benar/tepat' },
+{ kanji:'ふき取る', furigana:'ふきとる', meaning:'Dilap/dipel/dikeringkan' },
+{ kanji:'つまずき', furigana:'-', meaning:'Tersandung' },
+{ kanji:'空箱', furigana:'からばこ', meaning:'Kotak kosong' },
+{ kanji:'突然', furigana:'とつぜん', meaning:'Tiba-tiba/mendadak' },
+{ kanji:'損なう', furigana:'そこなう', meaning:'Merusak' },
+{ kanji:'引っ掛かる', furigana:'ひっかかる', meaning:'Terjebak/terjerat' },
+{ kanji:'崩す', furigana:'くずす', meaning:'Goyah/runtuh' },
+{ kanji:'開き止め金具', furigana:'ひらきとめかなぐ', meaning:'Gesper/buckle bukaan/celah' },
+{ kanji:'片手', furigana:'かたて', meaning:'Satu tangan' },
+{ kanji:'つかむ', furigana:'-', meaning:'Mencengkeram/memegang' },
+{ kanji:'鉄板', furigana:'てっぱん', meaning:'Pelat besi/baja' },
+{ kanji:'素手', furigana:'すて', meaning:'Tangan kosong' },
+{ kanji:'移す', furigana:'うつす', meaning:'Memindah/mengganti' },
+{ kanji:'直後', furigana:'ちょくご', meaning:'Segera setelah' },
+{ kanji:'鍋', furigana:'なべ', meaning:'Panci' },
+{ kanji:'釜', furigana:'かま', meaning:'Panci besi/ketel/ceret' },
+{ kanji:'不安定', furigana:'ふ안てい', meaning:'Tidak stabil' },
+{ kanji:'膝', furigana:'ひざ', meaning:'Lutut/pangkuan' },
+{ kanji:'曲げる', furigana:'まげる', meaning:'Mencondongkan/membengkokkan' },
+{ kanji:'伸ばす', furigana:'のばす', meaning:'Meluruskan/meregangkan' },
+{ kanji:'生あん工程', furigana:'せいあんこうてい', meaning:'Proses pembuatan kacang merah' },
+{ kanji:'汗', furigana:'あせ', meaning:'Keringat' },
+{ kanji:'乾き', furigana:'かわき', meaning:'Kekeringan/kering' },
+{ kanji:'安静にする', furigana:'あんせいにする', meaning:'Beristirahat' },
+{ kanji:'ゆるめ', furigana:'-', meaning:'Melonggarkan/mengendurkan' },
+{ kanji:'脇の下', furigana:'わきのした', meaning:'Bawah ketiak' },
+{ kanji:'足 diつけ根', furigana:'あしのつけね', meaning:'Pangkal/selangkangan kaki' },
+{ kanji:'一時停止する', furigana:'いちじていしする', meaning:'Berhenti/menjeda sementara' },
+{ kanji:'通過する', furigana:'つうかする', meaning:'Melewati/lewat' },
+];
+
+let cards = JSON.parse(localStorage.getItem('kanji_cards') || 'null') || [...DEFAULT_CARDS];
+let gameQueue=[], gameIndex=0, gameCorrect=0, gameWrong=0, isRevealed=false;
+const COLORS = ['var(--red)','var(--orange)','var(--yellow)','var(--green)','var(--blue)','var(--pink)'];
+
+function save() { localStorage.setItem('kanji_cards', JSON.stringify(cards)); }
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['manage','browse','game'][i]===name));
+  if(name==='manage') renderManage();
+  if(name==='browse') renderBrowse();
+  if(name==='game')   renderGameStart();
+}
+
+function addCard() {
+  const k=document.getElementById('inp-kanji').value.trim();
+  const f=document.getElementById('inp-furi').value.trim();
+  const m=document.getElementById('inp-mean').value.trim();
+  if(!k||!f||!m){ shake('inp-kanji'); return; }
+  cards.push({kanji:k, furigana:f, meaning:m});
+  save(); renderManage();
+  ['inp-kanji','inp-furi','inp-mean'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('inp-kanji').focus();
+}
+
+function deleteCard(i) { cards.splice(i,1); save(); renderManage(); }
+
+function renderManage() {
+  const list = document.getElementById('manage-list');
+  const empty = document.getElementById('manage-empty');
+  document.getElementById('card-count').textContent = cards.length + ' kartu';
+  if(!cards.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = cards.map((c,i) => `
+    <div class="fc-item">
+      <div class="fc-num">#${String(i+1).padStart(2,'0')}</div>
+      <div class="fc-kanji">${c.kanji}</div>
+      <div class="fc-furi">${c.furigana}</div>
+      <div class="fc-mean fc-mean-col">${c.meaning}</div>
+      <button class="fc-del" onclick="deleteCard(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function shake(id) {
+  const el=document.getElementById(id);
+  el.style.borderColor='var(--red)';
+  el.style.boxShadow='0 0 0 3px rgba(255,61,90,.2)';
+  setTimeout(()=>{ el.style.borderColor=''; el.style.boxShadow=''; },600);
+}
+
+/* ── BROWSE ── */
+function renderBrowse() {
+  const grid = document.getElementById('flip-grid');
+  const empty = document.getElementById('browse-empty');
+  if(!cards.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  grid.innerHTML = cards.map((c,i) => `
+    <div class="flip-card" id="fc-${i}" onclick="toggleFlip(${i})">
+      <div class="flip-card-wrap" id="fcw-${i}">
+        <div class="flip-front" id="fcf-${i}">
+          <div class="fn">#${String(i+1).padStart(2,'0')}</div>
+          <div class="fk">${c.kanji}</div>
+          <div class="hint">Tap</div>
+        </div>
+        <div class="flip-back">
+          <div class="flip-back-inner">
+            <div class="back-furi-wrap">
+              <div class="back-label">Furigana</div>
+              <div class="back-furi">${c.furigana}</div>
+            </div>
+            <div class="back-divider"></div>
+            <div class="back-mean-wrap">
+              <div class="back-label">Arti</div>
+              <div class="back-mean">${c.meaning}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // After render: measure front height, set wrap height so back aligns
+  requestAnimationFrame(() => {
+    cards.forEach((_,i) => {
+      const front = document.getElementById('fcf-'+i);
+      const wrap  = document.getElementById('fcw-'+i);
+      if(front && wrap){
+        const h = Math.max(front.offsetHeight, 90);
+        wrap.style.height = h + 'px';
+      }
+    });
+  });
+}
+
+function toggleFlip(i) { document.getElementById('fc-'+i).classList.toggle('flipped'); }
+function flipAll(state) { document.querySelectorAll('.flip-card').forEach(c=>c.classList.toggle('flipped',state)); }
+
+/* ── GAME ── */
+let rangeMode = 'all'; // 'all' | 'range'
+
+function setRangeMode(mode) {
+  rangeMode = mode;
+  document.getElementById('tab-all').classList.toggle('active', mode==='all');
+  document.getElementById('tab-range').classList.toggle('active', mode==='range');
+  document.getElementById('range-inputs-wrap').style.display = mode==='range' ? 'block' : 'none';
+  updateRangeInfo();
+}
+
+function buildQuickRanges() {
+  const wrap = document.getElementById('range-quick-wrap');
+  if(!wrap) return;
+  const total = cards.length;
+  if(!total){ wrap.innerHTML=''; return; }
+  // Auto-generate sensible quick ranges
+  const steps = [50, 100, 150, 200, 250, 300].filter(s => s < total);
+  let html = '';
+  // Always add "1 - 50", "1 - 100", etc. and halves
+  const presets = [];
+  [50,100,150,200,250,300].forEach(n => {
+    if(n <= total) presets.push([1, n]);
+  });
+  if(total > 10) {
+    const mid = Math.ceil(total/2);
+    presets.push([1, mid]);
+    presets.push([mid+1, total]);
+  }
+  // Deduplicate
+  const seen = new Set();
+  presets.forEach(([f,t]) => {
+    const key = f+'-'+t;
+    if(!seen.has(key) && f<=t){ seen.add(key); html += `<button class="range-quick-btn" onclick="applyQuickRange(${f},${t})">${f}–${t}</button>`; }
+  });
+  wrap.innerHTML = `<span style="font-size:.7rem;color:var(--muted);margin-right:2px;">Cepat:</span>` + html;
+}
+
+function applyQuickRange(from, to) {
+  document.getElementById('inp-range-from').value = from;
+  document.getElementById('inp-range-to').value = to;
+  updateRangeInfo();
+}
+
+function getSelectedCards() {
+  if(rangeMode === 'all') return cards.map((c,i) => ({...c, _origNum: i+1}));
+  const from = parseInt(document.getElementById('inp-range-from').value) || 1;
+  const to   = parseInt(document.getElementById('inp-range-to').value)   || cards.length;
+  const f = Math.max(1, from) - 1;
+  const t = Math.min(cards.length, to);
+  return cards.slice(f, t).map((c,i) => ({...c, _origNum: f+i+1}));
+}
+
+function updateRangeInfo() {
+  const infoRow  = document.getElementById('range-info-row');
+  const infoText = document.getElementById('range-info-text');
+  if(rangeMode === 'all') {
+    infoRow.className = 'range-info-row';
+    infoText.textContent = `Semua ${cards.length} kartu akan digunakan`;
+    return;
+  }
+  const sel = getSelectedCards();
+  const from = parseInt(document.getElementById('inp-range-from').value) || 1;
+  const to   = parseInt(document.getElementById('inp-range-to').value)   || cards.length;
+  if(!sel.length || from > to || from < 1) {
+    infoRow.className = 'range-info-row warn';
+    infoText.textContent = 'Range tidak valid. Periksa kembali angkanya.';
+  } else {
+    infoRow.className = 'range-info-row';
+    infoText.textContent = `${sel.length} kartu dipilih (No. ${Math.max(1,from)} – ${Math.min(cards.length,to)} dari ${cards.length} total)`;
+  }
+}
+
+function renderGameStart() {
+  document.getElementById('game-start-screen').style.display='block';
+  document.getElementById('game-play-screen').style.display='none';
+  document.getElementById('game-result-screen').style.display='none';
+  const note = document.getElementById('game-empty-note');
+  note.innerHTML = cards.length
+    ? `<div class="shuffle-tag">&#x1F500; ${cards.length} kartu tersedia &middot; diacak otomatis</div>`
+    : `<div class="empty-state" style="padding:16px 0;"><div class="e-icon" style="font-size:2rem;">&#x1F4ED;</div><p>Tambahkan kartu dulu!</p></div>`;
+  // Set default range inputs
+  document.getElementById('inp-range-from').value = 1;
+  document.getElementById('inp-range-to').value = cards.length || '';
+  buildQuickRanges();
+  updateRangeInfo();
+}
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr; }
+
+function startGame() {
+  if(!cards.length){ showPage('manage'); return; }
+  const selected = getSelectedCards();
+  if(!selected.length){
+    updateRangeInfo(); // show error state
+    // shake range inputs
+    ['inp-range-from','inp-range-to'].forEach(id => {
+      const el = document.getElementById(id);
+      el.style.borderColor='var(--red)'; el.style.boxShadow='0 0 0 3px rgba(255,61,90,.2)';
+      setTimeout(()=>{ el.style.borderColor=''; el.style.boxShadow=''; },600);
+    });
+    return;
+  }
+  gameQueue=shuffle(selected); gameIndex=0; gameCorrect=0; gameWrong=0; isRevealed=false;
+  document.getElementById('game-start-screen').style.display='none';
+  document.getElementById('game-result-screen').style.display='none';
+  document.getElementById('game-play-screen').style.display='block';
+  updateScore(); loadCard();
+}
+
+function syncGameCardHeight() {
+  // Make game-card height match game-front's natural height
+  const front = document.querySelector('.game-front');
+  const card  = document.getElementById('game-card');
+  if(front && card){
+    card.style.minHeight = Math.max(front.scrollHeight, 180) + 'px';
+  }
+}
+
+function loadCard() {
+  if(gameIndex >= gameQueue.length){ showResult(); return; }
+  isRevealed = false;
+  const c = gameQueue[gameIndex];
+  const card = document.getElementById('game-card');
+  card.classList.remove('revealed','correct-flash','wrong-flash');
+  card.style.minHeight = ''; // reset before measuring
+
+  document.getElementById('g-num').textContent  = `#${String(c._origNum).padStart(2,'0')}`;
+  document.getElementById('g-kanji').textContent = c.kanji;
+  document.getElementById('g-furi').textContent  = c.furigana;
+  document.getElementById('g-mean').textContent  = c.meaning;
+  document.getElementById('g-kanji').style.color = COLORS[gameIndex % COLORS.length];
+  document.getElementById('g-prog-fill').style.width = (gameIndex/gameQueue.length*100)+'%';
+  document.getElementById('g-prog-text').textContent = `Kartu ${gameIndex+1} dari ${gameQueue.length}`;
+  // Show range label
+  const tag = document.getElementById('g-range-tag');
+  if(rangeMode === 'range') {
+    const from = document.getElementById('inp-range-from').value;
+    const to   = document.getElementById('inp-range-to').value;
+    tag.textContent = '\uD83C\uDFAF No. ' + from + '\u2013' + to;
+  } else {
+    tag.innerHTML = '&#x1F500; Acak';
+  }
+  document.getElementById('g-btns').style.display = 'flex';
+  document.getElementById('g-judge-btns').style.display = 'none';
+  document.getElementById('btn-reveal').disabled = false;
+
+  // sync height after paint
+  requestAnimationFrame(syncGameCardHeight);
+}
+
+function revealCard() {
+  if(isRevealed) return;
+  isRevealed = true;
+  document.getElementById('game-card').classList.add('revealed');
+  document.getElementById('g-btns').style.display = 'none';
+  document.getElementById('g-judge-btns').style.display = 'flex';
+}
+
+function judgeCard(correct) {
+  const card = document.getElementById('game-card');
+  if(correct){ gameCorrect++; card.classList.add('correct-flash'); }
+  else       { gameWrong++;   card.classList.add('wrong-flash'); }
+  updateScore();
+  setTimeout(()=>{ gameIndex++; loadCard(); }, 700);
+}
+
+function updateScore(){
+  document.getElementById('g-correct').textContent = gameCorrect;
+  document.getElementById('g-wrong').textContent   = gameWrong;
+}
+
+function showResult() {
+  document.getElementById('game-play-screen').style.display='none';
+  document.getElementById('game-result-screen').style.display='block';
+  const total=gameQueue.length, pct=Math.round(gameCorrect/total*100);
+  let emoji,title,sub;
+  if(pct===100){emoji='🏆';title='Sempurna!';sub='Kamu menjawab semua dengan benar!';}
+  else if(pct>=80){emoji='🎉';title='Luar Biasa!';sub='Kamu hampir sempurna!';}
+  else if(pct>=60){emoji='👍';title='Bagus!';sub='Terus berlatih ya!';}
+  else if(pct>=40){emoji='📚';title='Lumayan!';sub='Masih banyak yang perlu dipelajari.';}
+  else{emoji='💪';title='Jangan Menyerah!';sub='Latihan membuat sempurna!';}
+  document.getElementById('r-emoji').textContent = emoji;
+  document.getElementById('r-title').textContent = title;
+  document.getElementById('r-sub').textContent   = sub;
+  document.getElementById('r-score').textContent = `${gameCorrect}/${total}`;
+  document.getElementById('r-percent').textContent = `${pct}% benar`;
+  // Show range info
+  let rangeLabel = 'Semua kartu';
+  if(rangeMode === 'range') {
+    const from = document.getElementById('inp-range-from').value;
+    const to   = document.getElementById('inp-range-to').value;
+    rangeLabel = `Range No. ${from} \u2013 ${to}`;
+  }
+  const rp = document.getElementById('r-percent');
+  rp.innerHTML = `${pct}% benar &nbsp;&middot;&nbsp; <span style="color:var(--purple)">${rangeLabel}</span>`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  ['inp-kanji','inp-furi','inp-mean'].forEach(id=>{
+    document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') addCard(); });
+  });
+  renderManage();
+});
+</script>
+</body>
+</html>
