@@ -456,44 +456,13 @@ margin:0;
   <header>
     <div class="logo">漢字カード <span>· Flashcard</span></div>
     <nav>
-      <button class="nav-btn active" onclick="showPage('manage')">✏️ Kelola</button>
-      <button class="nav-btn" onclick="showPage('browse')">🗂️ Browse</button>
+      <button class="nav-btn active" onclick="showPage('browse')">🗂️ Browse</button>
       <button class="nav-btn" onclick="showPage('game')">🎮 Game</button>
     </nav>
   </header>
 
-  <!-- ── MANAGE ── -->
-  <div id="page-manage" class="page active">
-    <div class="section-title">
-      <div class="badge" style="background:linear-gradient(135deg,var(--purple),var(--blue))">✏️</div>
-      Kelola Flashcard
-    </div>
-    <div class="add-form">
-      <div class="form-group">
-        <label>Kanji (漢字)</label>
-        <input id="inp-kanji" type="text" placeholder="e.g. 山">
-      </div>
-      <div class="form-group">
-        <label>Furigana (読み方)</label>
-        <input id="inp-furi" type="text" placeholder="e.g. やま (yama)">
-      </div>
-      <div class="form-group">
-        <label>Arti (意味)</label>
-        <input id="inp-mean" type="text" placeholder="e.g. Gunung">
-      </div>
-      <button class="btn-add" onclick="addCard()">＋ Tambah</button>
-    </div>
-    <div class="col-count-info">Koleksi Kartu · <strong id="card-count">0 kartu</strong></div>
-    <div class="manage-header">
-      <span>No</span><span>Kanji</span><span>Furigana</span><span>Arti</span><span></span>
-    </div>
-    <div id="manage-list" class="manage-list"></div>
-    <div id="manage-empty" class="empty-state" style="display:none;">
-      <div class="e-icon">🃏</div><p>Belum ada kartu. Tambahkan kanji pertamamu!</p>
-    </div>
-  </div>
-
-  <!-- ── BROWSE ── -->
+  <!-- Manage page removed -->
+<!-- ── BROWSE ── -->
   <div id="page-browse" class="page">
     <div class="section-title">
       <div class="badge" style="background:linear-gradient(135deg,var(--orange),var(--yellow))">🗂️</div>
@@ -603,7 +572,7 @@ margin:0;
         <div class="result-actions">
           <button class="answer-btn reveal-btn" onclick="startGame()">&#x1F504; Main Lagi (Range Sama)</button>
           <button class="answer-btn" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border:none;" onclick="renderGameStart();document.getElementById('game-result-screen').style.display='none';document.getElementById('game-start-screen').style.display='block';">&#x1F3AF; Ganti Range</button>
-          <button class="answer-btn" style="background:var(--card);border:1px solid var(--border);color:var(--text);" onclick="showPage('manage')">&#x270F;&#xFE0F; Edit Kartu</button>
+          <button class="answer-btn" style="background:var(--card);border:1px solid var(--border);color:var(--text);" onclick="showPage('browse')">&#x270F;&#xFE0F; Browse Kartu</button>
         </div>
       </div>
     </div>
@@ -1529,7 +1498,7 @@ function renderGameStart() {
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr; }
 
 function startGame() {
-  if(!cards.length){ showPage('manage'); return; }
+  if(!cards.length){ showPage('browse'); return; }
   const selected = getSelectedCards();
   if(!selected.length){
     updateRangeInfo(); // show error state
