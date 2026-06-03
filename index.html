@@ -365,6 +365,71 @@ margin:0;
   .result-score-big { font-family:'Zen Dots'; font-size:4rem; background:linear-gradient(135deg,var(--yellow),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   .result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:32px; }
 
+  /* ── WRONG CARDS REVIEW SECTION ── */
+  .wrong-review-wrap {
+    max-width: 800px;
+    margin: 32px auto 0;
+    text-align: left;
+  }
+  .wrong-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding: 14px 20px;
+    background: rgba(255,61,90,.08);
+    border: 1px solid rgba(255,61,90,.2);
+    border-radius: 14px;
+    color: var(--text);
+    flex-wrap: wrap;
+  }
+  .wrong-section-icon { font-size: 1.2rem; flex-shrink:0; }
+  .wrong-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .wrong-card {
+    background: var(--card);
+    border: 1px solid rgba(255,61,90,.25);
+    border-left: 3px solid var(--wc-accent, var(--red));
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .wrong-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.35); }
+  .wrong-card-num {
+    font-family: 'Zen Dots'; font-size: .6rem;
+    color: var(--muted); letter-spacing: 1px;
+  }
+  .wrong-card-kanji {
+    font-family: 'Noto Sans JP'; font-weight: 900;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    line-height: 1.2; word-break: break-word;
+  }
+  .wrong-card-divider {
+    height: 1px; background: rgba(255,255,255,.08); margin: 2px 0;
+  }
+  .wrong-card-row {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .wrong-card-label {
+    font-size: .58rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .wrong-card-value {
+    font-size: .82rem; color: var(--text);
+    word-break: break-word; line-height: 1.4;
+  }
+  .wrong-card-value.furi {
+    font-family: 'Noto Sans JP'; color: var(--yellow); font-weight: 600;
+  }
+
   .game-start { text-align:center; padding:48px 20px; }
   .game-start h2 { font-size:1.8rem; font-weight:700; margin-bottom:12px; }
   .game-start p  { color:var(--muted); margin-bottom:32px; }
@@ -575,6 +640,10 @@ margin:0;
           <button class="answer-btn" style="background:var(--card);border:1px solid var(--border);color:var(--text);" onclick="showPage('browse')">&#x270F;&#xFE0F; Browse Kartu</button>
         </div>
       </div>
+
+      <!-- WRONG CARDS REVIEW -->
+      <div class="wrong-review-wrap" id="r-wrong-section"></div>
+
     </div>
   </div>
 </div>
@@ -589,9 +658,9 @@ const DEFAULT_CARDS = [
 { kanji:'欠かせません', furigana:'かかせません', meaning:'Sangat diperlukan/krusial/penting' },
 { kanji:'統計', furigana:'とうけい', meaning:'Statistik' },
 { kanji:'動き', furigana:'うごき', meaning:'Perkembangan/pergerakan' },
-{ kanji:'畜産食料品', furigana:'ちくさんしょくりょうひん', meaning:'Bahan makanan ternak' },
+{ kanji:'畜産食料品', furigana:'ちくさんしょくりょうひん', meaning:'Produk peternakan' },
 { kanji:'水産食料品', furigana:'すいさんしょくりょうひん', meaning:'Produk perikanan' },
-{ kanji:'精穀・製粉', furigana:'せいこく・せいふん', meaning:'Tepung' },
+{ kanji:'精穀・製粉', furigana:'せいこく・せいふん', meaning:'Biji-Bijian, tepung' },
 { kanji:'生産額', furigana:'せいさんがく', meaning:'Jumlah produksi' },
 { kanji:'兆円', furigana:'ちょうえん', meaning:'Triliun yen' },
 { kanji:'菓子類', furigana:'かしるい', meaning:'Cemilan' },
@@ -616,7 +685,7 @@ const DEFAULT_CARDS = [
 { kanji:'作業手順書', furigana:'さぎょうてじゅんしょ', meaning:'Panduan prosedur bekerja' },
 { kanji:'守る', furigana:'まもる', meaning:'Mengikuti/mematuhi' },
 { kanji:'機械', furigana:'きかい', meaning:'Mesin' },
-{ kanji:'器具', furigana:'きぐ', meaning:'Perkakas' },
+{ kanji:'器具', furigana:'きぐ', meaning:'Peralatan' },
 { kanji:'作業者', furigana:'さぎょうしゃ', meaning:'Pekerja/operator' },
 { kanji:'安全', furigana:'あんぜん', meaning:'Aman/keamanan' },
 { kanji:'健康', furigana:'けんこう', meaning:'Kesehatan' },
@@ -675,7 +744,7 @@ const DEFAULT_CARDS = [
 { kanji: '調理', furigana: 'ちょうり', meaning: 'Memasak' },
 { kanji: '蓋をする', furigana: 'ふたをする', meaning: 'Menutup' },
 { kanji: '髪の毛', furigana: 'かみのけ', meaning: 'Rambut' },
-{ kanji: '紙片', furigana: 'しへん', meaning: 'Potongan' },
+{ kanji: '紙片', furigana: 'しへん', meaning: 'Potongan kertas' },
 { kanji: '不潔', furigana: 'ふけつ', meaning: 'Tidak bersih/jorok/kotor' },
 { kanji: '不衛生', furigana: 'ふえいせい', meaning: 'Tidak sehat/higienis' },
 { kanji: '思われ', furigana: 'おもわれ', meaning: 'Tampak' },
@@ -730,7 +799,7 @@ const DEFAULT_CARDS = [
 { kanji:'キウイフルーツ', furigana:'きういふるーつ', meaning:'Buah kiwi' },
 { kanji:'ごま', furigana:'-', meaning:'Wijen' },
 { kanji:'さば', furigana:'さば', meaning:'Ikan kembung' },
-{ kanji:'大豆', furigana:'だいず', meaning:'Kedalai' },
+{ kanji:'大豆', furigana:'だいず', meaning:'Kedelai' },
 { kanji:'やまいも', furigana:'やまいも', meaning:'Ubi jepang' },
 { kanji:'桃', furigana:'もも', meaning:'Buah Persik' },
 { kanji:'ゼラチン', furigana:'ぜらちん', meaning:'Gelatin/agar-agar' },
@@ -770,7 +839,7 @@ const DEFAULT_CARDS = [
 { kanji:'食中毒菌', furigana:'しょくちゅうどくきん', meaning:'Bakteri penyebab keracunan makanan' },
 { kanji:'カンピロバクター属菌', furigana:'かんぴろばくたーぞくきん', meaning:'Bakteri kampilobakter' },
 { kanji:'サルモネラ属菌', furigana:'さるもねらぞくきん', meaning:'Bakteri salmonella' },
-{ kanji:'腸炎ビブリオ', font:'ちょうえんびぶりお', meaning:'Bakteri vibrio parahaemolyticus' },
+{ kanji:'腸炎ビブリオ', furigana:'ちょうえんびぶりお', meaning:'Bakteri vibrio parahaemolyticus' },
 { kanji:'腸管出血性大腸菌 (O157、O111 など)', furigana:'ちょうかんしゅっけつせいだいちょうきん', meaning:'E. Coli' },
 { kanji:'黄色ブドウ球菌', furigana:'おうしょくぶどうきゅうきん', meaning:'Bakteri staphylococcus aureus' },
 { kanji:'セレウス菌', furigana:'せれうすきん', meaning:'Bacillus cereus' },
@@ -830,7 +899,7 @@ const DEFAULT_CARDS = [
 { kanji:'布巾', furigana:'ふきん', meaning:'Kain lap piring' },
 { kanji:'拭く', furigana:'ふく', meaning:'Mengelap/mengeringkan' },
 { kanji:'原則', furigana:'げんそく', meaning:'Prinsip' },
-{ kanji:'対策', furigana:'たいさく', meaning:'Ketentuan' },
+{ kanji:'対策', furigana:'たいさく', meaning:'Pencegahan/solusi' },
 { kanji:'有効', furigana:'ゆうこう', meaning:'Sah/efektif' },
 { kanji:'持ち込む', furigana:'もちこむ', meaning:'Membawa masuk' },
 { kanji:'確認する', furigana:'かくにんする', meaning:'Memverifikasi/mengonfirmasi' },
@@ -876,7 +945,7 @@ const DEFAULT_CARDS = [
 { kanji:'区域', furigana:'くいき', meaning:'Zona/area' },
 { kanji:'盛り付け', furigana:'もりつけ', meaning:'Penyajian/pengaturan' },
 { kanji:'包装', furigana:'ほうそう', meaning:'Pengemasan/pembungkusan' },
-{ kanji:'出荷する', furigana:'しゅっかする', meaning:'Pengiriman1' },
+{ kanji:'出荷する', furigana:'しゅっかする', meaning:'Pengiriman' },
 { kanji:'段ボール箱', furigana:'だんぼーるばこ', meaning:'Kotak kardus/karton (bisa dipakai kembali)' },
 { kanji:'詰める', furigana:'つめる', meaning:'Memasukkan/mengemas' },
 { kanji:'通る', furigana:'とおる', meaning:'Melalui/melewati' },
@@ -951,7 +1020,7 @@ const DEFAULT_CARDS = [
 { kanji:'つば', furigana:'-', meaning:'Ludah' },
 { kanji:'財布', furigana:'さいふ', meaning:'Dompet' },
 { kanji:'関係', furigana:'かんけい', meaning:'Hubungan' },
-{ kanji:'持ち物', furigana:'もちもの', meaning:'Barang pribadi' },
+{ kanji:'持ち物', furigana:'もちもの', meaning:'Barang bawaan' },
 { kanji:'ホチキスの針', furigana:'ほちきすのはり', meaning:'Staples (untuk menjepret)' },
 { kanji:'書類', furigana:'しょるい', meaning:'Dokumen' },
 { kanji:'鉛筆', furigana:'えんぴつ', meaning:'Pensil' },
@@ -1309,19 +1378,22 @@ const DEFAULT_CARDS = [
 
 let cards = JSON.parse(localStorage.getItem('kanji_cards') || 'null') || [...DEFAULT_CARDS];
 let gameQueue=[], gameIndex=0, gameCorrect=0, gameWrong=0, isRevealed=false;
+let wrongCards = []; // ← NEW: track wrong cards
 const COLORS = ['var(--red)','var(--orange)','var(--yellow)','var(--green)','var(--blue)','var(--pink)'];
 
 function save() { localStorage.setItem('kanji_cards', JSON.stringify(cards)); }
 
+// ── PAGE NAVIGATION ──
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['manage','browse','game'][i]===name));
   if(name==='manage') renderManage();
-  if(name==='browse') renderBrowse();
+  if(name==='browse') renderBrowseLazy();
   if(name==='game')   renderGameStart();
 }
 
+// ── MANAGE ──
 function addCard() {
   const k=document.getElementById('inp-kanji').value.trim();
   const f=document.getElementById('inp-furi').value.trim();
@@ -1359,55 +1431,114 @@ function shake(id) {
   setTimeout(()=>{ el.style.borderColor=''; el.style.boxShadow=''; },600);
 }
 
-/* ── BROWSE ── */
-function renderBrowse() {
+// ── BROWSE — Lazy/chunked render for performance ──
+const BROWSE_CHUNK = 40; // render 40 cards at a time
+let browseRenderedCount = 0;
+let browseSentinel = null;
+
+function renderBrowseLazy() {
   const grid = document.getElementById('flip-grid');
   const empty = document.getElementById('browse-empty');
+
   if(!cards.length){ grid.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
 
-  grid.innerHTML = cards.map((c,i) => `
-    <div class="flip-card" id="fc-${i}" onclick="toggleFlip(${i})">
-      <div class="flip-card-wrap" id="fcw-${i}">
-        <div class="flip-front" id="fcf-${i}">
-          <div class="fn">#${String(i+1).padStart(2,'0')}</div>
-          <div class="fk">${c.kanji}</div>
-          <div class="hint">Tap</div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-inner">
-            <div class="back-furi-wrap">
-              <div class="back-label">Furigana</div>
-              <div class="back-furi">${c.furigana}</div>
-            </div>
-            <div class="back-divider"></div>
-            <div class="back-mean-wrap">
-              <div class="back-label">Arti</div>
-              <div class="back-mean">${c.meaning}</div>
+  // Clean up old observer if any
+  if(browseSentinel) {
+    if(browseObserver) browseObserver.disconnect();
+    browseSentinel = null;
+  }
+
+  // Reset state
+  browseRenderedCount = 0;
+  grid.innerHTML = '';
+
+  // Render first chunk immediately (no delay = instant display)
+  appendBrowseChunk(grid);
+
+  // If more cards remain, set up intersection observer for infinite scroll
+  if(browseRenderedCount < cards.length) {
+    setupBrowseObserver(grid);
+  }
+}
+
+let browseObserver = null;
+
+function appendBrowseChunk(grid) {
+  const start = browseRenderedCount;
+  const end = Math.min(start + BROWSE_CHUNK, cards.length);
+  const fragment = document.createDocumentFragment();
+
+  for(let i = start; i < end; i++) {
+    const c = cards[i];
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div class="flip-card" id="fc-${i}" onclick="toggleFlip(${i})">
+        <div class="flip-card-wrap" id="fcw-${i}">
+          <div class="flip-front" id="fcf-${i}">
+            <div class="fn">#${String(i+1).padStart(2,'0')}</div>
+            <div class="fk">${c.kanji}</div>
+            <div class="hint">Tap</div>
+          </div>
+          <div class="flip-back">
+            <div class="flip-back-inner">
+              <div class="back-furi-wrap">
+                <div class="back-label">Furigana</div>
+                <div class="back-furi">${c.furigana}</div>
+              </div>
+              <div class="back-divider"></div>
+              <div class="back-mean-wrap">
+                <div class="back-label">Arti</div>
+                <div class="back-mean">${c.meaning}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `;
+    fragment.appendChild(wrapper.firstElementChild);
+  }
+  grid.appendChild(fragment);
+  browseRenderedCount = end;
 
-  // After render: measure front height, set wrap height so back aligns
+  // Fix heights after paint
   requestAnimationFrame(() => {
-    cards.forEach((_,i) => {
+    for(let i = start; i < end; i++) {
       const front = document.getElementById('fcf-'+i);
       const wrap  = document.getElementById('fcw-'+i);
       if(front && wrap){
         const h = Math.max(front.offsetHeight, 90);
         wrap.style.height = h + 'px';
       }
-    });
+    }
   });
+}
+
+function setupBrowseObserver(grid) {
+  // Create a sentinel element at the bottom of the grid
+  browseSentinel = document.createElement('div');
+  browseSentinel.style.height = '1px';
+  grid.after(browseSentinel);
+
+  browseObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting && browseRenderedCount < cards.length) {
+        appendBrowseChunk(grid);
+        if(browseRenderedCount >= cards.length) {
+          browseObserver.disconnect();
+          if(browseSentinel) browseSentinel.remove();
+        }
+      }
+    });
+  }, { rootMargin: '200px' });
+
+  browseObserver.observe(browseSentinel);
 }
 
 function toggleFlip(i) { document.getElementById('fc-'+i).classList.toggle('flipped'); }
 function flipAll(state) { document.querySelectorAll('.flip-card').forEach(c=>c.classList.toggle('flipped',state)); }
 
-/* ── GAME ── */
+// ── GAME ──
 let rangeMode = 'all'; // 'all' | 'range'
 
 function setRangeMode(mode) {
@@ -1423,10 +1554,6 @@ function buildQuickRanges() {
   if(!wrap) return;
   const total = cards.length;
   if(!total){ wrap.innerHTML=''; return; }
-  // Auto-generate sensible quick ranges
-  const steps = [50, 100, 150, 200, 250, 300].filter(s => s < total);
-  let html = '';
-  // Always add "1 - 50", "1 - 100", etc. and halves
   const presets = [];
   [50,100,150,200,250,300].forEach(n => {
     if(n <= total) presets.push([1, n]);
@@ -1436,8 +1563,8 @@ function buildQuickRanges() {
     presets.push([1, mid]);
     presets.push([mid+1, total]);
   }
-  // Deduplicate
   const seen = new Set();
+  let html = '';
   presets.forEach(([f,t]) => {
     const key = f+'-'+t;
     if(!seen.has(key) && f<=t){ seen.add(key); html += `<button class="range-quick-btn" onclick="applyQuickRange(${f},${t})">${f}–${t}</button>`; }
@@ -1488,7 +1615,6 @@ function renderGameStart() {
   note.innerHTML = cards.length
     ? `<div class="shuffle-tag">&#x1F500; ${cards.length} kartu tersedia &middot; diacak otomatis</div>`
     : `<div class="empty-state" style="padding:16px 0;"><div class="e-icon" style="font-size:2rem;">&#x1F4ED;</div><p>Tambahkan kartu dulu!</p></div>`;
-  // Set default range inputs
   document.getElementById('inp-range-from').value = 1;
   document.getElementById('inp-range-to').value = cards.length || '';
   buildQuickRanges();
@@ -1501,8 +1627,7 @@ function startGame() {
   if(!cards.length){ showPage('browse'); return; }
   const selected = getSelectedCards();
   if(!selected.length){
-    updateRangeInfo(); // show error state
-    // shake range inputs
+    updateRangeInfo();
     ['inp-range-from','inp-range-to'].forEach(id => {
       const el = document.getElementById(id);
       el.style.borderColor='var(--red)'; el.style.boxShadow='0 0 0 3px rgba(255,61,90,.2)';
@@ -1511,6 +1636,7 @@ function startGame() {
     return;
   }
   gameQueue=shuffle(selected); gameIndex=0; gameCorrect=0; gameWrong=0; isRevealed=false;
+  wrongCards = []; // ← reset wrong cards list
   document.getElementById('game-start-screen').style.display='none';
   document.getElementById('game-result-screen').style.display='none';
   document.getElementById('game-play-screen').style.display='block';
@@ -1518,7 +1644,6 @@ function startGame() {
 }
 
 function syncGameCardHeight() {
-  // Make game-card height match game-front's natural height
   const front = document.querySelector('.game-front');
   const card  = document.getElementById('game-card');
   if(front && card){
@@ -1532,7 +1657,7 @@ function loadCard() {
   const c = gameQueue[gameIndex];
   const card = document.getElementById('game-card');
   card.classList.remove('revealed','correct-flash','wrong-flash');
-  card.style.minHeight = ''; // reset before measuring
+  card.style.minHeight = '';
 
   document.getElementById('g-num').textContent  = `#${String(c._origNum).padStart(2,'0')}`;
   document.getElementById('g-kanji').textContent = c.kanji;
@@ -1541,7 +1666,7 @@ function loadCard() {
   document.getElementById('g-kanji').style.color = COLORS[gameIndex % COLORS.length];
   document.getElementById('g-prog-fill').style.width = (gameIndex/gameQueue.length*100)+'%';
   document.getElementById('g-prog-text').textContent = `Kartu ${gameIndex+1} dari ${gameQueue.length}`;
-  // Show range label
+
   const tag = document.getElementById('g-range-tag');
   if(rangeMode === 'range') {
     const from = document.getElementById('inp-range-from').value;
@@ -1550,11 +1675,10 @@ function loadCard() {
   } else {
     tag.innerHTML = '&#x1F500; Acak';
   }
-  // Hide both button groups while loading new card to prevent any flash of next answer
+
   document.getElementById('g-btns').style.display = 'none';
   document.getElementById('g-judge-btns').style.display = 'none';
 
-  // Show reveal button only after a tiny delay to ensure card is fully reset/painted
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       document.getElementById('g-btns').style.display = 'flex';
@@ -1562,7 +1686,6 @@ function loadCard() {
     });
   });
 
-  // sync height after paint
   requestAnimationFrame(syncGameCardHeight);
 }
 
@@ -1577,21 +1700,23 @@ function revealCard() {
 function judgeCard(correct) {
   const card = document.getElementById('game-card');
 
-  // Immediately hide judge buttons so user can't click again
   document.getElementById('g-judge-btns').style.display = 'none';
 
-  if(correct){ gameCorrect++; card.classList.add('correct-flash'); }
-  else       { gameWrong++;   card.classList.add('wrong-flash'); }
+  if(correct){
+    gameCorrect++;
+    card.classList.add('correct-flash');
+  } else {
+    gameWrong++;
+    card.classList.add('wrong-flash');
+    wrongCards.push(gameQueue[gameIndex]); // ← record wrong card
+  }
   updateScore();
 
-  // Step 1: After brief flash (500ms), flip the card BACK to front face
   setTimeout(() => {
     card.classList.remove('correct-flash','wrong-flash');
-    card.classList.remove('revealed'); // flip back to front
+    card.classList.remove('revealed');
     isRevealed = false;
 
-    // Step 2: Wait for the flip-back animation to finish (700ms = transition duration),
-    // THEN load the next card data. This prevents the next answer from showing mid-flip.
     setTimeout(() => {
       gameIndex++;
       loadCard();
@@ -1618,8 +1743,7 @@ function showResult() {
   document.getElementById('r-title').textContent = title;
   document.getElementById('r-sub').textContent   = sub;
   document.getElementById('r-score').textContent = `${gameCorrect}/${total}`;
-  document.getElementById('r-percent').textContent = `${pct}% benar`;
-  // Show range info
+
   let rangeLabel = 'Semua kartu';
   if(rangeMode === 'range') {
     const from = document.getElementById('inp-range-from').value;
@@ -1628,12 +1752,52 @@ function showResult() {
   }
   const rp = document.getElementById('r-percent');
   rp.innerHTML = `${pct}% benar &nbsp;&middot;&nbsp; <span style="color:var(--purple)">${rangeLabel}</span>`;
+
+  // ── Render wrong cards section ──
+  const wrongSection = document.getElementById('r-wrong-section');
+  if(wrongCards.length === 0) {
+    wrongSection.innerHTML = `
+      <div class="wrong-section-title">
+        <span class="wrong-section-icon">✅</span>
+        Tidak ada kartu yang salah — sempurna!
+      </div>`;
+  } else {
+    wrongSection.innerHTML = `
+      <div class="wrong-section-title">
+        <span class="wrong-section-icon">❌</span>
+        Kartu yang Salah (${wrongCards.length})
+        <span style="font-size:.75rem; font-weight:400; color:var(--muted);">— pelajari lagi ya!</span>
+      </div>
+      <div class="wrong-cards-grid">
+        ${wrongCards.map((c, i) => `
+          <div class="wrong-card" style="--wc-accent:${COLORS[i % COLORS.length]}">
+            <div class="wrong-card-num">#${String(c._origNum).padStart(2,'0')}</div>
+            <div class="wrong-card-kanji" style="color:${COLORS[i % COLORS.length]}">${c.kanji}</div>
+            <div class="wrong-card-divider"></div>
+            <div class="wrong-card-row">
+              <span class="wrong-card-label">Furigana</span>
+              <span class="wrong-card-value furi">${c.furigana}</span>
+            </div>
+            <div class="wrong-card-row">
+              <span class="wrong-card-label">Arti</span>
+              <span class="wrong-card-value">${c.meaning}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
+  // FIX #1: Render browse page on load since it's the default active page
+  renderBrowseLazy();
+
+  // Manage keyboard shortcuts (if manage inputs exist)
   ['inp-kanji','inp-furi','inp-mean'].forEach(id=>{
-    document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') addCard(); });
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('keydown',e=>{ if(e.key==='Enter') addCard(); });
   });
+  // Also init manage if needed
   renderManage();
 });
 </script>
