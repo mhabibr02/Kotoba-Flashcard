@@ -75,79 +75,6 @@
   .badge { display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:.8rem;font-weight:700; }
 
   /* ══════════════════════════════
-     MANAGE PAGE
-  ══════════════════════════════ */
-  .add-form {
-    background: var(--card); border:1px solid var(--border);
-    border-radius: 20px; padding:28px;
-    display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:14px; align-items:end;
-    margin-bottom:32px;
-  }
-  .form-group label { display:block; font-size:.75rem; font-weight:600; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; text-align:center; }
-  .form-group input {
-    width:100%; padding:12px 16px; border-radius:12px;
-    background:var(--surface); border:1px solid var(--border);
-    color:var(--text); font-size:1rem; font-family:'Noto Sans JP','Poppins',sans-serif;
-    transition: border-color .2s, box-shadow .2s; outline: none; text-align:center;
-  }
-  .form-group input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(58,134,255,.15); }
-  .form-group input::placeholder { color: var(--muted); opacity: .6; }
-  .btn-add {
-    padding:12px 24px; border-radius:12px; border:none; cursor:pointer;
-    background:linear-gradient(135deg,var(--green),var(--blue));
-    color:#fff; font-weight:700; font-size:.9rem; font-family:'Poppins';
-    transition: transform .15s, box-shadow .15s; white-space:nowrap;
-  }
-  .btn-add:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(58,199,132,.3); }
-
-  .col-count-info {
-    display:flex; justify-content:center; align-items:center; gap:12px;
-    margin-bottom:16px; font-size:.85rem; color:var(--muted);
-  }
-  .col-count-info strong { font-family:'Zen Dots'; color:var(--yellow); font-size:.95rem; }
-
-  /* Manage list — horizontal rows, no ellipsis */
-  .manage-list { display:flex; flex-direction:column; gap:10px; }
-  .manage-header {
-    display:grid; grid-template-columns:60px 1fr 1fr 1fr 40px;
-    gap:12px; padding:0 20px 8px;
-    font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; text-align:center;
-  }
-  .fc-item {
-    background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 20px;
-    display:grid; grid-template-columns:60px 1fr 1fr 1fr 40px;
-    align-items:center; gap:12px;
-    transition: transform .2s, box-shadow .2s;
-  }
-  .fc-item:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.4); }
-  .fc-num {
-    font-family:'Zen Dots'; font-size:.65rem;
-    padding:4px 8px; border-radius:50px; text-align:center;
-    background:linear-gradient(135deg,var(--purple),var(--blue)); color:#fff;
-  }
-  /* No ellipsis — allow wrap */
-  .fc-kanji {
-    font-family:'Noto Sans JP'; font-weight:900; text-align:center;
-    font-size:clamp(.85rem, 2vw, 1.6rem);
-    word-break:break-all; line-height:1.3;
-  }
-  .fc-furi { font-family:'Noto Sans JP'; font-size:.82rem; color:var(--yellow); text-align:center; word-break:break-word; line-height:1.4; }
-  .fc-mean { font-size:.82rem; color:var(--muted); text-align:center; word-break:break-word; line-height:1.4; }
-  .fc-del {
-    width:32px;height:32px; border-radius:50%; border:none;
-    background:rgba(255,61,90,.15); color:var(--red);
-    font-size:.9rem; cursor:pointer; display:flex;align-items:center;justify-content:center;
-    transition: background .2s; flex-shrink:0; margin:0 auto;
-  }
-  .fc-del:hover { background:var(--red); color:#fff; }
-  .fc-item:nth-child(6n+1) .fc-kanji { color:var(--red); }
-  .fc-item:nth-child(6n+2) .fc-kanji { color:var(--orange); }
-  .fc-item:nth-child(6n+3) .fc-kanji { color:var(--yellow); }
-  .fc-item:nth-child(6n+4) .fc-kanji { color:var(--green); }
-  .fc-item:nth-child(6n+5) .fc-kanji { color:var(--blue); }
-  .fc-item:nth-child(6n+6) .fc-kanji { color:var(--pink); }
-
-  /* ══════════════════════════════
      BROWSE PAGE
      Flip cards: horizontal, auto height — no ellipsis
   ══════════════════════════════ */
@@ -520,12 +447,7 @@ margin:0;
   .empty-state .e-icon { font-size:4rem; margin-bottom:16px; }
 
   @media(max-width:650px) {
-    .add-form { grid-template-columns:1fr 1fr; }
-    .add-form .btn-add { grid-column:1/-1; }
     .flip-grid { grid-template-columns:1fr; }
-    .manage-header { display:none; }
-    .fc-item { grid-template-columns:52px 1fr 1fr 36px; }
-    .fc-mean-col { display:none; }
   }
 </style>
 </head>
@@ -543,7 +465,7 @@ margin:0;
 
   <!-- Manage page removed -->
 <!-- ── BROWSE ── -->
-  <div id="page-browse" class="page">
+  <div id="page-browse" class="page active">
     <div class="section-title">
       <div class="badge" style="background:linear-gradient(135deg,var(--orange),var(--yellow))">🗂️</div>
       Browse Flashcard
@@ -669,7 +591,8 @@ margin:0;
 <script>
 const CATEGORY_META = {
   pengolah_makanan: { label: 'Pengolah Makanan', icon: '🍱' },
-  pertanian:         { label: 'Pertanian',         icon: '🌾' }
+  pertanian:         { label: 'Pertanian',         icon: '🌾' },
+  kanji_satuan:      { label: 'Kanji Satuan',      icon: '📏' }
 };
 
 const DEFAULT_CARDS_PENGOLAH_MAKANAN = [
@@ -1615,9 +1538,513 @@ const DEFAULT_CARDS_PERTANIAN = [
   { kanji: '秤量器', furigana: 'ひょうりょうき', meaning: 'Timbangan digital' },
 ];
 
+const DEFAULT_CARDS_KANJI_SATUAN = [
+  { kanji: '日', furigana: 'ひ(hi), -び(bi), -か(ka), ニチ(nichi), ニ(ni), -ジツ(jitsu)', meaning: 'Matahari/Hari' },
+  { kanji: '月', furigana: 'つき(tsuki), ゲツ(getsu), -ガツ(gatsu)', meaning: 'Bulan' },
+  { kanji: '木', furigana: 'き(ki), モク(moku), ボク(boku)', meaning: 'Pohon' },
+  { kanji: '山', furigana: 'やま(yama), サン(san)', meaning: 'Gunung' },
+  { kanji: '川', furigana: 'かわ(kawa), -がわ(gawa), セン(sen)', meaning: 'Sungai' },
+  { kanji: '田', furigana: 'た(ta), -だ(da), デン(den)', meaning: 'Sawah' },
+  { kanji: '人', furigana: 'ひと(hito), ジン(jin), ニン(nin)', meaning: 'Orang/Manusia' },
+  { kanji: '口', furigana: 'くち(kuchi), -ぐち(guchi), コウ(kou)', meaning: 'Mulut' },
+  { kanji: '車', furigana: 'くるま(kuruma), シャ(sha)', meaning: 'Mobil/Kendaraan' },
+  { kanji: '門', furigana: 'かど(kado), モン(mon)', meaning: 'Gerbang' },
+  { kanji: '火', furigana: 'ひ(hi), カ(ka)', meaning: 'Api' },
+  { kanji: '水', furigana: 'みず(mizu), スイ(sui)', meaning: 'Air' },
+  { kanji: '金', furigana: 'かね(kane), キン(kin)', meaning: 'Emas/Uang/Logam' },
+  { kanji: '土', furigana: 'つち(tsuchi), ド(do)', meaning: 'Tanah/Bumi' },
+  { kanji: '子', furigana: 'こ(ko), シ(shi)', meaning: 'Anak' },
+  { kanji: '女', furigana: 'おんな(onna), ジョ(jo)', meaning: 'Wanita/Perempuan' },
+  { kanji: '学', furigana: 'まな-ぶ(mana-bu), ガク(gaku), ガッ-(ga-)', meaning: 'Belajar/Studi' },
+  { kanji: '生', furigana: 'い-きる(i-kiru), う-まれる(u-mareru), セイ(sei)', meaning: 'Hidup/Lahir' },
+  { kanji: '先', furigana: 'さき(saki), セン(sen)', meaning: 'Sebelum/Lalu/Ujung' },
+  { kanji: '私', furigana: 'わたし(watashi), わたくし(watakushi), シ(shi)', meaning: 'Saya/Pribadi' },
+  { kanji: '一', furigana: 'ひと-つ(hito-tsu), イチ(ichi)', meaning: 'Satu' },
+  { kanji: '二', furigana: 'ふた-つ(futa-tsu), ニ(ni)', meaning: 'Dua' },
+  { kanji: '三', furigana: 'みっ-つ(mit-tsu), サン(san)', meaning: 'Tiga' },
+  { kanji: '四', furigana: 'よっ-つ(yot-tsu), よん(yon), よ(yo), シ(chi)', meaning: 'Empat' },
+  { kanji: '五', furigana: 'いつ-つ(itsu-tsu), ゴ(go)', meaning: 'Lima' },
+  { kanji: '六', furigana: 'むっ-つ(mut-tsu), ロク(roku), ロッ-(ro-)', meaning: 'Enam' },
+  { kanji: '七', furigana: 'なな-つ(nana-tsu), シチ(shichi)', meaning: 'Tujuh' },
+  { kanji: '八', furigana: 'やっ-つ(yat-tsu), ハチ(hachi), ハッ-(ha-)', meaning: 'Delapan' },
+  { kanji: '九', furigana: 'ここの-つ(kokono-tsu), ク(ku), キュウ(kyuu)', meaning: 'Sembilan' },
+  { kanji: '十', furigana: 'とお(too), ジュウ(juu), ジュッ-(ju-), ジッ-(ji-)', meaning: 'Sepuluh' },
+  { kanji: '百', furigana: 'ヒャク(hyaku), -ビャク(byaku), -ピャク(pyaku)', meaning: 'Seratus' },
+  { kanji: '千', furigana: 'ち(chi), セン(sen), -ゼン(zen)', meaning: 'Seribu' },
+  { kanji: '万', furigana: 'マン(man), バン(ban)', meaning: 'Sepuluh Ribu' },
+  { kanji: '円', furigana: 'エン(en)', meaning: 'Lingkaran/Yen' },
+  { kanji: '年', furigana: 'とし(toshi), ネン(nen)', meaning: 'Tahun/Usia' },
+  { kanji: '上', furigana: 'うえ(ue), あ-がる(a-garu), のぼ-る(nobo-ru), あ-げる(a-げる), ジョウ(jou)', meaning: 'Atas/Naik' },
+  { kanji: '下', furigana: 'した(shita), さ-がる(sa-garu), くだ-る(kuda-ru), さ-げる(sa-geru), カ(ka), ゲ(ge)', meaning: 'Bawah/Turun' },
+  { kanji: '中', furigana: 'なか(naka), チュウ(chuu), -ジュウ(juu)', meaning: 'Tengah/Dalam' },
+  { kanji: '大', furigana: 'おお-きい(oo-kii), ダイ(dai), タイ(tai)', meaning: 'Besar' },
+  { kanji: '小', furigana: 'ちい-さい(chii-sai), こ(ko), お(o), ショウ(shou)', meaning: 'Kecil' },
+  { kanji: '本', furigana: 'もと(moto), ホン(hon)', meaning: 'Asal/Buku/Utama' },
+  { kanji: '半', furigana: 'なか-ば(naka-ba), ハン(han)', meaning: 'Setengah' },
+  { kanji: '分', furigana: 'わ-かれる(wa-kareru), わ-かる(wa-karu), わ-ける(wa-keru), ブン(bun), ブ(bu), フン(fun), -プン(pun)', meaning: 'Bagian/Menit/Membagi' },
+  { kanji: '力', furigana: 'ちから(chikara), リョク(ryoku), リキ(riki)', meaning: 'Kekuatan/Kemampuan' },
+  { kanji: '何', furigana: 'なに(nani), なん(nan), カ(ka)', meaning: 'Apa' },
+  { kanji: '明', furigana: 'あか-るい(aka-rui), あ-ける(a-keru), メイ(mei)', meaning: 'Terang/Cahaya' },
+  { kanji: '休', furigana: 'やす-む(yasu-mu), キュウ(kyuu)', meaning: 'Istirahat/Libur' },
+  { kanji: '体', furigana: 'からだ(karada), タイ(tai)', meaning: 'Tubuh/Badan' },
+  { kanji: '好', furigana: 'す-きな(su-kina), す-く(su-ku), コウ(kou)', meaning: 'Suka/Favorit' },
+  { kanji: '男', furigana: 'おとこ(otoko), ダン(dan), ナン(nan)', meaning: 'Pria/Laki-laki' },
+  { kanji: '林', furigana: 'はやし(hayashi), リン(rin)', meaning: 'Kayu' },
+  { kanji: '森', furigana: 'もり(mori), シン(shin)', meaning: 'Hutan' },
+  { kanji: '間', furigana: 'あいだ(aida), ま(ma), カン(kan)', meaning: 'Antara/Interval/Waktu' },
+  { kanji: '畑', furigana: 'はたけ(hatake), はた(hata)', meaning: 'Ladang/Budidaya' },
+  { kanji: '岩', furigana: 'いわ(iwa), ガン(gan)', meaning: 'Batu/Batu Karang' },
+  { kanji: '目', furigana: 'め(me), モク(moku)', meaning: 'Mata/Poin/Item' },
+  { kanji: '耳', furigana: 'みみ(mimi), ジ(ji)', meaning: 'Telinga' },
+  { kanji: '手', furigana: 'て(te), シュ(shu)', meaning: 'Tangan' },
+  { kanji: '足', furigana: 'あし(ashi), た-りる(ta-riru), た-す(ta-su), ソク(soku)', meaning: 'Kaki/Cukup/Berpasangan' },
+  { kanji: '雨', furigana: 'あめ(ame), ウ(u)', meaning: 'Hujan' },
+  { kanji: '竹', furigana: 'たけ(take), チク(chiku)', meaning: 'Bambu' },
+  { kanji: '米', furigana: 'こめ(kome), マイ(mai), ベイ(bei)', meaning: 'Beras/Amerika' },
+  { kanji: '貝', furigana: 'かい(kai), バイ(bai)', meaning: 'Kerang/Kerang-kerangan' },
+  { kanji: '石', furigana: 'いし(ishi), セキ(seki)', meaning: 'Batu' },
+  { kanji: '糸', furigana: 'いと(ito), シ(shi)', meaning: 'Benang' },
+  { kanji: '花', furigana: 'はな(hana), カ(ka)', meaning: 'Bunga' },
+  { kanji: '茶', furigana: 'チャ(cha), サ(sa)', meaning: 'Teh' },
+  { kanji: '肉', furigana: 'ニク(niku)', meaning: 'Daging' },
+  { kanji: '文', furigana: 'ふみ(fumi), ブン(bun), モン(mon)', meaning: 'Kalimat/Huruf/Pola' },
+  { kanji: '字', furigana: 'ジ(ji)', meaning: 'Huruf/Karakter' },
+  { kanji: '物', furigana: 'もの(mono), ブツ(butsu), モツ(motsu)', meaning: 'Benda/Sesuatu' },
+  { kanji: '牛', furigana: 'うし(ushi), ギュウ(gyuu)', meaning: 'Sapi' },
+  { kanji: '馬', furigana: 'うま(uma), バ(ba)', meaning: 'Kuda' },
+  { kanji: '鳥', furigana: 'とり(tori), チョウ(chou)', meaning: 'Burung' },
+  { kanji: '魚', furigana: 'さかな(sakana), うお(uo), ギョ(gyo)', meaning: 'Ikan' },
+  { kanji: '新', furigana: 'あたら-しい(atara-shii), シン(shin)', meaning: 'Baru' },
+  { kanji: '古', furigana: 'ふる-い(furu-ih), コ(ko)', meaning: 'Lama/Tua/Kuno' },
+  { kanji: '長', furigana: 'なが-い(naga-i), チョウ(chou)', meaning: 'Panjang/Pemimpin/Sulung' },
+  { kanji: '短', furigana: 'みじか-い(mijika-i), タン(tan)', meaning: 'Pendek' },
+  { kanji: '高', furigana: 'たか-い(taka-i), コウ(kou)', meaning: 'Tinggi/Mahal' },
+  { kanji: '安', furigana: 'やす-い(yasu-i), アン(an)', meaning: 'Murah/Aman' },
+  { kanji: '低', furigana: 'ひく-い(hiku-i), テイ(tei)', meaning: 'Rendah' },
+  { kanji: '暗', furigana: 'くら-い(kura-i), アン(an)', meaning: 'Gelap' },
+  { kanji: '多', furigana: 'おお-い(oo-i), タ(ta)', meaning: 'Banyak' },
+  { kanji: '少', furigana: 'すく-ない(suku-nai), すこ-し(suko-shi), ショウ(shou)', meaning: 'Sedikit' },
+  { kanji: '行', furigana: 'い-く(i-ku), おこな-う(okona-u), コウ(kou), ギョウ(gyou)', meaning: 'Pergi/Melakukan/Baris' },
+  { kanji: '来', furigana: 'く-る(ku-ru), こ-ない(ko-nai), き-ます(ki-masu), き-た(ki-ta), ライ(rai)', meaning: 'Datang/Berikutnya' },
+  { kanji: '帰', furigana: 'かえ-る(kae-ru), キ(ki)', meaning: 'Pulang/Kembali' },
+  { kanji: '食', furigana: 'た-べる(ta-beru), ショク(shoku)', meaning: 'Makan/Makanan' },
+  { kanji: '飲', furigana: 'の-む(no-mu), イン(in)', meaning: 'Minum' },
+  { kanji: '見', furigana: 'み-る(mi-ru), み-える(mi-eru), み-せる(mi-seru), ケン(ken)', meaning: 'Melihat/Menonton/Memperlihatkan' },
+  { kanji: '聞', furigana: 'き-く(ki-ku), き-こえる(ki-koeru), ブン(bun)', meaning: 'Mendengar/Mendengarkan' },
+  { kanji: '読', furigana: 'よ-む(yo-mu), ドク(doku)', meaning: 'Membaca' },
+  { kanji: '書', furigana: 'か-く(ka-ku), ショ(sho)', meaning: 'Menulis/Buku/Dokumen' },
+  { kanji: '話', furigana: 'はな-す(hana-su), はなし(hanashi), ワ(wa)', meaning: 'Berbicara/Cerita' },
+  { kanji: '買', furigana: 'か-う(ka-u), バイ(bai)', meaning: 'Membeli' },
+  { kanji: '教', furigana: 'おし-え(oshi-eru), キョウ(kyou)', meaning: 'Mengajar/Pendidikan/Agama' },
+  { kanji: '朝', furigana: 'あさ(asa), チョウ(chou)', meaning: 'Pagi' },
+  { kanji: '昼', furigana: 'ひる(hiru), チュウ(chuu)', meaning: 'Siang' },
+  { kanji: '夜', furigana: 'よる(yoru), よ(yo), ヤ(ya)', meaning: 'Malam' },
+  { kanji: '晩', furigana: 'バン(ban)', meaning: 'Malam' },
+  { kanji: '夕', furigana: 'ゆう(yuu), セキ(seki)', meaning: 'Sore/Malam hari' },
+  { kanji: '方', furigana: 'かた(kata), -がた(-gata), ホウ(hou)', meaning: 'Arah/Cara/Sisi' },
+  { kanji: '午', furigana: 'ゴ(go)', meaning: 'Siang/Tengah hari' },
+  { kanji: '前', furigana: 'まえ(mae), ゼン(zen)', meaning: 'Depan/Sebelum/Sebelumnya' },
+  { kanji: '後', furigana: 'あと(ato), のち(nochi), うし-ろ(ushi-ro), ゴ(go), コウ(kou)', meaning: 'Belakang/Setelah/Nanti' },
+  { kanji: '毎', furigana: 'マイ(mai)', meaning: 'Setiap' },
+  { kanji: '週', furigana: 'シュウ(shuu)', meaning: 'Minggu' },
+  { kanji: '曜', furigana: 'ヨウ(you)', meaning: 'Hari dalam seminggu' },
+  { kanji: '作', furigana: 'つく-る(tsuku-ru), サク(saku), サ(sa)', meaning: 'Membuat/Memproduksi' },
+  { kanji: '泳', furigana: 'およ-ぐ(oyo-gu), エイ(ei)', meaning: 'Berenang' },
+  { kanji: '油', furigana: 'あぶra(abura), ユ(yu)', meaning: 'Minyak' },
+  { kanji: '海', furigana: 'うみ(umi), カイ(kai)', meaning: 'Laut' },
+  { kanji: '酒', furigana: 'さけ(sake), シュ(shu)', meaning: 'Sake/Minuman Beralkohol' },
+  { kanji: '待', furigana: 'ま-つ(matsu), まち(machi), タイ(tai)', meaning: 'Menunggu/Keramahan' },
+  { kanji: '校', furigana: 'コウ(kou)', meaning: 'Sekolah' },
+  { kanji: '時', furigana: 'とき(toki), ジ(ji)', meaning: 'Waktu/Jam' },
+  { kanji: '言', furigana: 'い-う(i-u), ゲン(gen), ゴン(gon)', meaning: 'Berkata/Mengatakan' },
+  { kanji: '計', furigana: 'はか-る(haka-ru), ケイ(kei)', meaning: 'Mengukur/Rencana' },
+  { kanji: '語', furigana: 'かた-る(kata-ru), ゴ(go)', meaning: 'Kata/Bahasa' },
+  { kanji: '飯', furigana: 'めし(meshi), ハン(han)', meaning: 'Nasi Matang/Makanan' },
+  { kanji: '宅', furigana: 'タク(taku)', meaning: 'Rumah/Kediaman' },
+  { kanji: '客', furigana: 'キャク(kyaku)', meaning: 'Tamu/Pelanggan' },
+  { kanji: '室', furigana: 'シツ(shitsu)', meaning: 'Kamar/Ruangan' },
+  { kanji: '家', furigana: 'いえ(ie), や(ya), カ(ka), ケ(ke)', meaning: 'Rumah' },
+  { kanji: '英', furigana: 'エイ(ei)', meaning: 'Bagus Sekali/Inggris' },
+  { kanji: '薬', furigana: 'くすり(kusuri), ヤク(yaku)', meaning: 'Obat' },
+  { kanji: '会', furigana: 'あ-う(a-u), カイ(kai)', meaning: 'Pertemuan/Asosiasi/Bertemu' },
+  { kanji: '今', furigana: 'いま(ima), コン(kon)', meaning: 'Sekarang/Saat ini' },
+  { kanji: '雪', furigana: 'ゆき(yuki), セツ(setu)', meaning: 'Salju' },
+  { kanji: '雲', furigana: 'くも(kumo), ウン(un)', meaning: 'Awan' },
+  { kanji: '電', furigana: 'デン(den)', meaning: 'Listrik' },
+  { kanji: '売', furigana: 'う-る(uru), バイ(bai)', meaning: 'Menjual' },
+  { kanji: '広', furigana: 'ひろ-い(hiro-i), コウ(kou)', meaning: 'Luas/Lapang' },
+  { kanji: '店', furigana: 'みせ(mise), テン(ten)', meaning: 'Toko' },
+  { kanji: '度', furigana: 'ド(do)', meaning: 'Derajat/Tingkat/Frekuensi' },
+  { kanji: '病', furigana: 'ビョウ(byou)', meaning: 'Sakit' },
+  { kanji: '疲', furigana: 'つか-れる(tsuka-reru), ヒ(hi)', meaning: 'Lelah/Letih' },
+  { kanji: '痛', furigana: 'いた-い(ita-i), いた-む(ita-mu), ツウ(tsuu)', meaning: 'Sakit/Nyeri' },
+  { kanji: '屋', furigana: 'や(ya), オク(oku)', meaning: 'Atap/Toko/Rumah' },
+  { kanji: '国', furigana: 'くに(kuni), コク(koku)', meaning: 'Negara' },
+  { kanji: '回', furigana: 'まわ-る(mawa-ru), まわ-す(mawa-su), カイ(kai)', meaning: 'Berputar/Kali' },
+  { kanji: '困', furigana: 'こま-る(koma-ru), コン(kon)', meaning: 'Susah/Sulit/Masalah' },
+  { kanji: '開', furigana: 'あ-く(a-ku), あ-ける(a-keru), ひら-く(hira-ku), カイ(kai)', meaning: 'Buka/Membuka' },
+  { kanji: '閉', furigana: 'し-まる(shima-ru), し-める(shime-ru), と-じる(toji-ru), ヘイ(hei)', meaning: 'Tutup/Menutup' },
+  { kanji: '近', furigana: 'ちか-い(chika-i), キン(kin)', meaning: 'Dekat/Baru-baru ini' },
+  { kanji: '遠', furigana: 'とお-い(too-i), エン(en)', meaning: 'Jauh' },
+  { kanji: '速', furigana: 'はや-い(haya-i), ソク(soku)', meaning: 'Cepat/Kecepatan' },
+  { kanji: '遅', furigana: 'おそ-い(oso-i), おく-れる(oku-reru), チ(chi)', meaning: 'Lambat/Terlambat' },
+  { kanji: '道', furigana: 'みち(michi), ドウ(dou)', meaning: 'Jalan/Cara' },
+  { kanji: '青', furigana: 'あお-い(ao-i), セイ(sei)', meaning: 'Biru' },
+  { kanji: '晴', furigana: 'は-れる(ha-reru), は-れ(ha-re), セイ(sei)', meaning: 'Cerah/Membersih' },
+  { kanji: '静', furigana: 'しず-かな(shizu-kana), セイ(sei)', meaning: 'Tenang/Hening' },
+  { kanji: '寺', furigana: 'てら(tera), ジ(ji)', meaning: 'Kuil Buddha' },
+  { kanji: '持', furigana: 'も-つ(mo-tsu), ジ(ji)', meaning: 'Memegang/Mempunyai' },
+  { kanji: '荷', furigana: 'に(ni), カ(ka)', meaning: 'Beban/Barang Bawaan' },
+  { kanji: '歌', furigana: 'うた(uta), うた-う(uta-u), カ(ka)', meaning: 'Lagu/Menyanyi' },
+  { kanji: '友', furigana: 'とも(tomo), ユウ(yuu)', meaning: 'Teman' },
+  { kanji: '父', furigana: 'ちち(chichi), フ(fu)', meaning: 'Ayah' },
+  { kanji: '母', furigana: 'はは(haha), ボ(bo)', meaning: 'Ibu' },
+  { kanji: '兄', furigana: 'あに(ani), ケイ(kei), キョウ(kyou)', meaning: 'Kakak Laki-laki' },
+  { kanji: '姉', furigana: 'あね(ane), シ(shi)', meaning: 'Kakak Perempuan' },
+  { kanji: '弟', furigana: 'おとうと(otouto), テイ(tei), ダイ(dai)', meaning: 'Adik Laki-laki' },
+  { kanji: '妹', furigana: 'いもうと(imouto), マイ(mai)', meaning: 'Adik Perempuan' },
+  { kanji: '夫', furigana: 'おっと(otto), フ(fu), フウ(fuu)', meaning: 'Suami' },
+  { kanji: '妻', furigana: 'つま(tsuma), サイ(sai)', meaning: 'Istri' },
+  { kanji: '彼', furigana: 'かれ(kare), かの(kano), ヒ(hi)', meaning: 'Dialaki-laki)' },
+  { kanji: '主', furigana: 'おも-な(omo-na), ぬし(nushi), シュ(shu)', meaning: 'Kepala/Utama/Pemilik/Tuan' },
+  { kanji: '奥', furigana: 'おく(oku), オウ(ou)', meaning: 'Bagian dalam, mendalam, interior' },
+  { kanji: '元', furigana: 'もと(moto), ゲン(gen), ガン(gan)', meaning: 'Asal, sumber, dasar' },
+  { kanji: '気', furigana: 'キ(ki)', meaning: 'Semangat, pikiran, udara, atmosfer' },
+  { kanji: '有', furigana: 'あ-る(a-ru), ユウ(yuu)', meaning: 'Mempunyai, memiliki, ada' },
+  { kanji: '名', furigana: 'な(na), メイ(mei), ミョウ(myou)', meaning: 'Nama, terkenal, anggota' },
+  { kanji: '親', furigana: 'おや(oya), した-しい(shita-shii), シン(shin)', meaning: 'Orang tua, keakraban, akrab' },
+  { kanji: '切', furigana: 'き-る(ki-ru), きっ-(kki-), セツ(setsu)', meaning: 'Memotong, berakhir, sedang/moderat' },
+  { kanji: '便', furigana: 'たよ-り(tayo-ri), ベン(ben), ビン(bin)', meaning: 'Kabar/surat, lalu lintas, kenyamanan/kemudahan' },
+  { kanji: '利', furigana: 'き-く(ki-ku), リ(ri)', meaning: 'Keuntungan, mahir/maju' },
+  { kanji: '不', furigana: 'フ(fu), ブ(bu)', meaning: 'Tidak, kurang, bukanprefiks negatif)' },
+  { kanji: '若', furigana: 'わか-い(waka-i), ジャク(jaku)', meaning: 'Muda' },
+  { kanji: '早', furigana: 'はや-い(haya-i), ソウ(sou)', meaning: 'Awal, cepat' },
+  { kanji: '忙', furigana: 'いそが-しい(isoga-shii), ボウ(bou)', meaning: 'Sibuk' },
+  { kanji: '出', furigana: 'で-る(de-ru), だ-す(da-su), シュツ(shutsu), シュッ-(shki-)', meaning: 'Keluar, mengeluarkan' },
+  { kanji: '入', furigana: 'はい-る(hai-ru), い-れる(i-reru), ニュウ(nyuu)', meaning: 'Masuk, memasukkan' },
+  { kanji: '乗', furigana: 'の-る(no-ru), の-せる(no-seru), ジョウ(jou)', meaning: 'Naikkendaraan), menaikkan/memuat' },
+  { kanji: '降', furigana: 'お-りる(o-riru), ふ-る(fu-ru), お-ろす(o-rosu), コウ(kou)', meaning: 'Turun, menurunkan, jatuhhujan/salju)' },
+  { kanji: '着', furigana: 'つ-く(tsu-ku), き-る(ki-ru), チャク(chaku)', meaning: 'Tiba, sampai, memakaipakaian)' },
+  { kanji: '渡', furigana: 'わた-る(wata-ru), わた-す(wata-su), ト(to)', meaning: 'Menyeberang, menyerahkan/melewati' },
+  { kanji: '通', furigana: 'とお-る(too-ru), かよ-う(kayo-u), とお-す(too-su), ツウ(tsuu)', meaning: 'Melewati, pulang-pergimelaju), meloloskan' },
+  { kanji: '走', furigana: 'はし-る(hashi-ru), ソウ(sou)', meaning: 'Berlari' },
+  { kanji: '歩', furigana: 'ある-く(aru-ku), ホ(ho), -ボ(-bo)', meaning: 'Berjalan kaki' },
+  { kanji: '止', furigana: 'と-まる(to-maru), と-める(to-meru), シ(shi)', meaning: 'Berhenti, menghentikan' },
+  { kanji: '動', furigana: 'うご-く(ugo-ku), うご-かす(ugo-kasu), ドウ(dou)', meaning: 'Bergerak, menggerakkan' },
+  { kanji: '働', furigana: 'はたら-く(hatara-ku), ドウ(dou)', meaning: 'Bekerja' },
+  { kanji: '右', furigana: 'みぎ(migi), ウ(u), ユウ(yuu)', meaning: 'Kanan' },
+  { kanji: '左', furigana: 'ひだり(hidari), サ(sa)', meaning: 'Kiri' },
+  { kanji: '東', furigana: 'ひがし(higashi), トウ(tou)', meaning: 'Timur' },
+  { kanji: '西', furigana: 'にし(nishi), セイ(sei), サイ(sai)', meaning: 'Barat' },
+  { kanji: '北', furigana: 'きた(kita), ホク(hoku), ホッ-(ho-)', meaning: 'Utara' },
+  { kanji: '南', furigana: 'みなみ(minami), ナン(nan)', meaning: 'Selatan' },
+  { kanji: '外', furigana: 'はず-れる(hazu-reru), そと(soto), はず-す(hazu-su), ほか(hoka), ガイ(gai), ゲ(ge)', meaning: 'Luar, luar/bagian luar, lain, asing' },
+  { kanji: '内', furigana: 'うち(uchi), ナイ(nai)', meaning: 'Dalam, bagian dalam, di dalam' },
+  { kanji: '部', furigana: 'ブ(bu)', meaning: 'Departemen, bagian, seksi, klub' },
+  { kanji: '駅', furigana: 'エキ(eki)', meaning: 'Stasiun' },
+  { kanji: '社', furigana: 'シャ(sha), -ジャ(-ja)', meaning: 'Kuil Shinto, perusahaan, perkumpulan' },
+  { kanji: '院', furigana: 'イン(in)', meaning: 'Aula, rumah, lembaga/institusi' },
+  { kanji: '地', furigana: 'ジ(ji), チ(chi)', meaning: 'Tanah, bumi, dasar' },
+  { kanji: '鉄', furigana: 'テツ(tetsu)', meaning: 'Besi' },
+  { kanji: '工', furigana: 'コウ(kou)', meaning: 'Kerajinan, keterampilan, konstruksi' },
+  { kanji: '場', furigana: 'ば(ba), ジョウ(jou)', meaning: 'Tempat, adegan/situasi' },
+  { kanji: '図', furigana: 'ズ(zu), ト(to)', meaning: 'Diagram, rencana/merancang, peta' },
+  { kanji: '館', furigana: 'カン(kan)', meaning: 'Gedung besar, aula, rumah besar' },
+  { kanji: '公', furigana: 'おおやけ(ooyake), コウ(kou)', meaning: 'Umum, publik, resmi' },
+  { kanji: '園', furigana: 'その(sono), エン(en)', meaning: 'Taman, kebun' },
+  { kanji: '住', furigana: 'す-む(su-mu), ジュウ(juu)', meaning: 'Tinggal, bermukim, mendiami' },
+  { kanji: '所', furigana: 'ところ(tokoro), ショ(sho), -ジョ(-jo)', meaning: 'Tempat' },
+  { kanji: '番', furigana: 'バン(ban)', meaning: 'Nomor, giliran, urutan' },
+  { kanji: '号', furigana: 'ゴウ(gou)', meaning: 'Panggilan, penamaan, nomor/urutanakhiran)' },
+  { kanji: '市', furigana: 'いち(ichi), シ(shi)', meaning: 'Kota, pasar' },
+  { kanji: '町', furigana: 'まち(machi), チョウ(chou)', meaning: 'Kota kecil, kota' },
+  { kanji: '村', furigana: 'むら(mura), ソン(son)', meaning: 'Desa' },
+  { kanji: '区', furigana: 'ク(ku)', meaning: 'Divisi, bagian, wilayah/distrik kota' },
+  { kanji: '都', furigana: 'みやこ(miyako), ト(to)', meaning: 'Ibu kota, kota besar, metropolis' },
+  { kanji: '府', furigana: 'フ(fu)', meaning: 'Prefektur administratif, pemerintah' },
+  { kanji: '県', furigana: 'ケン(ken)', meaning: 'Prefektur' },
+  { kanji: '島', furigana: 'しま(shima), トウ(tou)', meaning: 'Pulau' },
+  { kanji: '京', furigana: 'キョウ(kyou), ケイ(kei)', meaning: 'Ibu kota' },
+  { kanji: '様', furigana: 'さま(sama), ヨウ(you)', meaning: 'Penampilan, Tuan/Nyonya/Nonaakhiran penghormatan)' },
+  { kanji: '練', furigana: 'ね-る(ne-ru), レン(ren)', meaning: 'Menguleni' },
+  { kanji: '習', furigana: 'なら-う(nara-u), シュウ(shuu)', meaning: 'Latihan' },
+  { kanji: '勉', furigana: 'ベン(ben)', meaning: 'Berusaha' },
+  { kanji: '強', furigana: 'つよ-い(tsuyo-i), キョウ(kyou)', meaning: 'Kuat/Paksa' },
+  { kanji: '研', furigana: 'ケン(ken)', meaning: 'Mengasah/Meneliti' },
+  { kanji: '究', furigana: 'きわ-める(kiwa-meru), キュウ(kyuu)', meaning: 'Menyelidiki secara mendalam' },
+  { kanji: '留', furigana: 'と-まる(to-maru), と-める(to-meru), リュウ(ryuu)', meaning: 'Tinggal/Menahan' },
+  { kanji: '質', furigana: 'シツ(shitsu)', meaning: 'Kualitas/Pertanyaan' },
+  { kanji: '問', furigana: 'と-う(to-u), とい(toi), モン(mon)', meaning: 'Menanyakan/Pertanyaan' },
+  { kanji: '題', furigana: 'ダイ(dai)', meaning: 'Judul/Tema' },
+  { kanji: '答', furigana: 'こた-える(kota-eru), トウ(tou)', meaning: 'Jawaban' },
+  { kanji: '宿', furigana: 'やど(yado), シュク(shuku)', meaning: 'Penginapan/Tempat tinggal' },
+  { kanji: '政', furigana: 'セイ(sei)', meaning: 'Administrasi/Pemerintahan' },
+  { kanji: '治', furigana: 'おさ-まる(osa-maru), なお-る(nao-ru), おさ-める(osa-meru), なお-す(nao-su), ジ(ji), チ(chi)', meaning: 'Memerintah/Mengobati' },
+  { kanji: '経', furigana: 'へ-る(he-ru), ケイ(kei)', meaning: 'Mengontrol/Melewati' },
+  { kanji: '済', furigana: 'す-む(su-mu), す-ます(su-masu), サイ(sai), ザイ(zai)', meaning: 'Menyelesaikan/Menabung' },
+  { kanji: '歴', furigana: 'レキ(reki)', meaning: 'Karier/Riwayat' },
+  { kanji: '史', furigana: 'シ(shi)', meaning: 'Sejarah' },
+  { kanji: '育', furigana: 'そだ-つ(soda-tsu), そだ-てる(soda-teru), イク(iku)', meaning: 'Membiakkan/Membesarkan' },
+  { kanji: '化', furigana: 'ば-ける(ba-keru), カ(ka)', meaning: 'Berubah' },
+  { kanji: '理', furigana: 'リ(ri)', meaning: 'Alasan/Logika' },
+  { kanji: '科', furigana: 'カ(ka)', meaning: 'Cabang/Divisi' },
+  { kanji: '数', furigana: 'かず(kazu), かぞ-える(kazo-eru), スウ(suu)', meaning: 'Nomor/Beberapa' },
+  { kanji: '医', furigana: 'イ(i)', meaning: 'Dokter medis' },
+  { kanji: '映', furigana: 'うつ-る(utsu-ru), うつ-す(utsu-su), エイ(ei)', meaning: 'Mencerminkan/Memantulkan' },
+  { kanji: '画', furigana: 'ガ(ga), カク(kaku)', meaning: 'Gambar/Coretan kanji' },
+  { kanji: '写', furigana: 'うつ-る(utsu-ru), うつ-す(utsu-su), シャ(sha)', meaning: 'Menyalin/Memotret' },
+  { kanji: '真', furigana: 'ま(ma), まっ-(ma-), シン(shin)', meaning: 'Benar/Asli' },
+  { kanji: '音', furigana: 'おと(oto), オン(on)', meaning: 'Suara' },
+  { kanji: '楽', furigana: 'たの-しい(tano-shii), たの-しむ(tano-shimu), ガク(gaku), ラク(raku)', meaning: 'Menyenangkan/Musik' },
+  { kanji: '料', furigana: 'リョウ(ryou)', meaning: 'Bahan/Biaya' },
+  { kanji: '組', furigana: 'く-む(ku-mu), くみ(kumi)/-ぐみ(-gumi), ソ(so)', meaning: 'Menyatukan/Merakit' },
+  { kanji: '思', furigana: 'おも-う(omo-u), シ(shi)', meaning: 'Berpikir' },
+  { kanji: '色', furigana: 'いろ(iro), ショク(shoku)', meaning: 'Warna' },
+  { kanji: '白', furigana: 'しろ(shiro), しろ-い(shiro-i), ハク(haku)', meaning: 'Putih' },
+  { kanji: '黒', furigana: 'くろ(kuro), くろ-い(kuro-i), コク(koku)', meaning: 'Hitam' },
+  { kanji: '赤', furigana: 'あか(aka), あか-い(aka-i), セキ(seki)', meaning: 'Merah' },
+  { kanji: '起', furigana: 'お-きる(o-kiru), お-こる(o-koru), お-こす(o-kosu), キ(ki)', meaning: 'Bangun/Terjadi' },
+  { kanji: '寝', furigana: 'ね-る(ne-ru), ね-かす(ne-kasu), シン(shin)', meaning: 'Tidur' },
+  { kanji: '遊', furigana: 'あそ-ぶ(aso-bu), ユウ(yuu)', meaning: 'Bermain/Berkeliaran' },
+  { kanji: '立', furigana: 'た-つ(ta-tsu), たち-(tachi-), た-てる(ta-teru), リツ(ritsu)', meaning: 'Berdiri/Mendirikan' },
+  { kanji: '座', furigana: 'すわ-る(suwa-ru), ザ(za)', meaning: 'Duduk/Tempat duduk' },
+  { kanji: '使', furigana: 'つか-う(tsuka-u), シ(shi)', meaning: 'Menggunakan' },
+  { kanji: '始', furigana: 'はじ-まる(haji-maru), はじ-める(haji-meru), シ(shi)', meaning: 'Memulai' },
+  { kanji: '終', furigana: 'お-わる(o-waru), お-える(o-eru), シュウ(shuu)', meaning: 'Berakhir/Menyelesaikan' },
+  { kanji: '貸', furigana: 'か-す(ka-su), タイ(tai)', meaning: 'Meminjamkan/Menyewakan' },
+  { kanji: '借', furigana: 'か-りる(ka-riru), シャク(shaku), シャッ-(sha-)', meaning: 'Meminjam/Menyewa' },
+  { kanji: '返', furigana: 'かえ-る(kae-ru), かえ-す(kae-su), ヘン(hen)', meaning: 'Mengembalikan' },
+  { kanji: '送', furigana: 'おく-る(oku-ru), ソウ(sou)', meaning: 'Mengirim' },
+  { kanji: '結', furigana: 'むす-ぶ(musu-bu), ケツ(ketsu)/ケッ-(ket-)', meaning: 'Menghubungkan/Menyimpulkan' },
+  { kanji: '婚', furigana: 'コン(kon)', meaning: 'Pernikahan' },
+  { kanji: '離', furigana: 'はな-れる(hana-reru), はな-す(hana-su), リ(ri)', meaning: 'Memisahkan' },
+  { kanji: '席', furigana: 'セキ(seki)', meaning: 'Tempat duduk' },
+  { kanji: '欠', furigana: 'か-ける(ka-keru), か-く(ka-ku), ケツ(ketsu)/ケッ-(ket-)', meaning: 'Kurang/Cacat' },
+  { kanji: '予', furigana: 'ヨ(yo)', meaning: 'Sebelumnya/Persiapan' },
+  { kanji: '定', furigana: 'さだ-まる(sada-maru), さだ-める(sada-meru), テイ(tei)', meaning: 'Menetapkan/Memperbaiki' },
+  { kanji: '洋', furigana: 'ヨウ(you)', meaning: 'Samudra/Barat' },
+  { kanji: '式', furigana: 'シキ(shiki)', meaning: 'Upacara/Rumus' },
+  { kanji: '和', furigana: 'ワ(wa)', meaning: 'Perdamaian/Jepang' },
+  { kanji: '活', furigana: 'カツ(katsu)/カッ-(kat-)', meaning: 'Hidup/Semangat' },
+  { kanji: '春', furigana: 'はる(haru), シュン(shun)', meaning: 'Musim semi' },
+  { kanji: '夏', furigana: 'なつ(natsu), カ(ka)', meaning: 'Musim panas' },
+  { kanji: '秋', furigana: 'あき(aki), シュウ(shuu)', meaning: 'Musim gugur' },
+  { kanji: '冬', furigana: 'ふゆ(fuyu), トウ(tou)', meaning: 'Musim dingin' },
+  { kanji: '暑', furigana: 'あつ-い(atsu-i), ショ(sho)', meaning: 'Panasuntuk iklim)' },
+  { kanji: '熱', furigana: 'あつ-い(atsu-i), ネツ(netsu)/ネッ-(net-)', meaning: 'Panasuntuk benda)' },
+  { kanji: '寒', furigana: 'さむ-い(samu-i), カン(kan)', meaning: 'Dinginuntuk iklim)' },
+  { kanji: '冷', furigana: 'ひ-える(hi-eru), ひ-やす(hi-yasu), つめ-たい(tsume-tai), レイ(rei)', meaning: 'Dinginuntuk benda)' },
+  { kanji: '暖', furigana: 'あたた-かい(atata-kai), ダン(dan)', meaning: 'Hangatuntuk iklim)' },
+  { kanji: '温', furigana: 'あたた-まる(atata-maru), あたた-める(atata-meru), あたた-かい(atata-kai), オン(on)', meaning: 'Hangatuntuk benda)' },
+  { kanji: '涼', furigana: 'すず-しい(suzu-shii), リョウ(ryou)', meaning: 'Sejuk/Menyegarkan' },
+  { kanji: '天', furigana: 'あめ(ame), あま-(ama-), テン(ten)', meaning: 'Cuaca/Langit' },
+  { kanji: '仕', furigana: 'つか-える(tsuka-eru), シ(shi)', meaning: 'Melayani/Bekerja' },
+  { kanji: '事', furigana: 'こと(koto), ジ(ji)', meaning: 'Perkara/Hal' },
+  { kanji: '者', furigana: 'もの(mono), シャ(sha)', meaning: 'Orang' },
+  { kanji: '運', furigana: 'はこ-ぶ(hako-bu), ウン(un)', meaning: 'Membawa/Mengangkut' },
+  { kanji: '転', furigana: 'ころ-ぶ(koro-bu), テン(ten)', meaning: 'Berguling/Jatuh' },
+  { kanji: '選', furigana: 'えら-ぶ(era-bu), セン(sen)', meaning: 'Memilih' },
+  { kanji: '記', furigana: 'キ(ki)', meaning: 'Mencatat/Menjelaskan' },
+  { kanji: '議', furigana: 'ギ(gi)', meaning: 'Diskusi' },
+  { kanji: '員', furigana: 'イン(in)', meaning: 'Anggota' },
+  { kanji: '商', furigana: 'ショウ(shou)', meaning: 'Perdagangan/Barang dagangan' },
+  { kanji: '業', furigana: 'ギョウ(gyou)', meaning: 'Pekerjaan/Bisnis' },
+  { kanji: '農', furigana: 'ノウ(nou)', meaning: 'Pertanian/Bertani' },
+  { kanji: '良', furigana: 'よ-い(yo-i), リョウ(ryou)', meaning: 'Bagus/Baik' },
+  { kanji: '悪', furigana: 'わる-い(waru-i), アク(aku)', meaning: 'Buruk/Jahat' },
+  { kanji: '点', furigana: 'テン(ten)', meaning: 'Poin/Skor' },
+  { kanji: '正', furigana: 'ただ-しい(tada-shii), セイ(sei), ショウ(shou)', meaning: 'Benar/Tepat' },
+  { kanji: '違', furigana: 'ちが-う(chiga-u), イ(i)', meaning: 'Berbeda' },
+  { kanji: '同', furigana: 'おな-じ(ona-ji), ドウ(dou)', meaning: 'Sama' },
+  { kanji: '適', furigana: 'テキ(teki)', meaning: 'Sesuai/Cocok' },
+  { kanji: '当', furigana: 'あ-たる(a-taru), あ-てる(a-teru), トウ(tou)', meaning: 'Mengenai/Memenangi' },
+  { kanji: '難', furigana: 'むずか-しい(muzuka-shii), ナン(nan)', meaning: 'Sulit' },
+  { kanji: '次', furigana: 'つ-ぐ(tsu-gu), つぎ(tsugi), ジ(ji)', meaning: 'Selanjutnya/Berikutnya' },
+  { kanji: '形', furigana: 'かたち(katachi), ケイ(kei), ギョウ(gyou)', meaning: 'Bentuk' },
+  { kanji: '味', furigana: 'あじ(aji), あじ-わう(aji-wau), ミ(mi)', meaning: 'Rasa/Makna' },
+  { kanji: '試', furigana: 'こころ-みる(kokoro-miru), ため-す(tame-su), シ(shi)', meaning: 'Mencoba/Menguji' },
+  { kanji: '験', furigana: 'ケン(ken)', meaning: 'Bukti/Memeriksa' },
+  { kanji: '面', furigana: 'おも(omo), メン(men)', meaning: 'Wajah/Permukaan' },
+  { kanji: '接', furigana: 'つ-ぐ(tsu-gu), セツ(setsu), セッ-(set-)', meaning: 'Menghubungkan' },
+  { kanji: '説', furigana: 'セツ(setsu), セッ-(set-)', meaning: 'Menjelaskan' },
+  { kanji: '果', furigana: 'カ(ka)', meaning: 'Buah/Hasil' },
+  { kanji: '合', furigana: 'あ-う(a-u), あ-わす(a-wasu), ゴウ(gou), ガッ-(ga-)', meaning: 'Cocok/Menggabungkan' },
+  { kanji: '格', furigana: 'カク(kaku)', meaning: 'Struktur/Peringkat' },
+  { kanji: '受', furigana: 'う-かる(u-karu), う-ける(u-keru), ジュ(ju)', meaning: 'Menerima/Mengikuti' },
+  { kanji: '落', furigana: 'お-ちる(o-chiru), お-とす(o-tosu), ラク(raku), ラッ-(ra-) ', meaning: 'Jatuh' },
+  { kanji: '残', furigana: 'のこ-る(noko-ru), のこ-す(noko-su), ザン(zan)', meaning: 'Tersisa' },
+  { kanji: '念', furigana: 'ネン(nen)', meaning: 'Perasaan/Pikiran' },
+  { kanji: '指', furigana: 'ゆび(yubi), さ-す(sa-su), シ(shi)', meaning: 'Jari/Menunjuk' },
+  { kanji: '折', furigana: 'お-る(o-ru), セツ(setsu)', meaning: 'Melipat/Mematahkan' },
+  { kanji: '払', furigana: 'はら-う(hara-u)', meaning: 'Membayar' },
+  { kanji: '投', furigana: 'な-げる(na-geru), トウ(tou)', meaning: 'Melempar/Membuang' },
+  { kanji: '打', furigana: 'う-つ(u-tsu), ダ(da)', meaning: 'Memukul/Membentur' },
+  { kanji: '深', furigana: 'ふか-い(fuka-i), ふか-まる(fuka-maru), ふか-める(fuka-meru), シン(shin)', meaning: 'Kedalaman' },
+  { kanji: '洗', furigana: 'あら-う(ara-u), セン(sen)', meaning: 'Mencuci' },
+  { kanji: '流', furigana: 'なが-れる(naga-reru), なが-す(naga-su), リュウ(ryuu)', meaning: 'Aliran/Mengalir' },
+  { kanji: '消', furigana: 'き-える(ki-eru), け-す(ke-su), ショウ(shou)', meaning: 'Memadamkan/Menghilang/Menghapus' },
+  { kanji: '決', furigana: 'き-まる(ki-maru), き-める(ki-meru), ケツ(ketsu), ケッ-(ke-) ', meaning: 'Menentukan/Memutuskan' },
+  { kanji: '旅', furigana: 'たび(tabi), リョ(ryo)', meaning: 'Perjalanan' },
+  { kanji: '約', furigana: 'ヤク(yaku)', meaning: 'Janji/Kira-kira' },
+  { kanji: '案', furigana: 'アン(an)', meaning: 'Ide/Proposal' },
+  { kanji: '準', furigana: 'ジュン(jun)', meaning: 'Standar' },
+  { kanji: '備', furigana: 'そなえ-る(sonae-ru), そな-わる(sona-waru), ビ(bi)', meaning: 'Menyediakan' },
+  { kanji: '相', furigana: 'あい(ai), ソウ(sou), ショウ(shou)', meaning: 'Saling/Tatap muka/Menteri' },
+  { kanji: '談', furigana: 'ダン(dan)', meaning: 'Berbicara/Diskusi' },
+  { kanji: '連', furigana: 'つ-れる(tsu-reru), レン(ren)', meaning: 'Pasangan/Membawa' },
+  { kanji: '絡', furigana: 'ラク(raku)', meaning: 'Kusut' },
+  { kanji: '泊', furigana: 'と-まる(to-maru), と-める(to-meru), ハク(haku), パク(paku)', meaning: 'Menginap/Tinggal' },
+  { kanji: '特', furigana: 'トク(toku), トッ-(to-)', meaning: 'Terutama/Khusus' },
+  { kanji: '急', furigana: 'いそ-ぐ(iso-gu), キュウ(kyuu)', meaning: 'Cepat/Terburu-buru' },
+  { kanji: '線', furigana: 'セン(sen)', meaning: 'Garis' },
+  { kanji: '発', furigana: 'ハツ(hatsu), ハッ-(ha-), -パツ(-patsu)', meaning: 'Mengeluarkan/Memulai/Masalah' },
+  { kanji: '到', furigana: 'トウ(tou)', meaning: 'Mencapai/Mendekati' },
+  { kanji: '交', furigana: 'ま-じる(ma-jiru), まじ-わる(maji-waru), コウ(kou)', meaning: 'Bergaul/Menyilang/Bertukar' },
+  { kanji: '機', furigana: 'キ(ki)', meaning: 'Mesin/Kesempatan' },
+  { kanji: '関', furigana: 'カン(kan)', meaning: 'Penghalang/Berhubungan' },
+  { kanji: '局', furigana: 'キョク(kyoku)', meaning: 'Bagian/Biro' },
+  { kanji: '信', furigana: 'シン(shin)', meaning: 'Percaya/Pesan' },
+  { kanji: '路', furigana: 'ロ(ro)', meaning: 'Jalan/Rute' },
+  { kanji: '故', furigana: 'コ(ko)', meaning: 'Lama & Sayang/Almarhum/Hambatan' },
+  { kanji: '注', furigana: 'そそぐ(sosogu), チュウ(chuu)', meaning: 'Menuangkan/Fokus' },
+  { kanji: '意', furigana: 'イ(i)', meaning: 'Arti' },
+  { kanji: '押', furigana: 'お-す(o-su)', meaning: 'Menekan/Mendorong' },
+  { kanji: '引', furigana: 'ひ-く(hi-ku), イン(in)', meaning: 'Menarik' },
+  { kanji: '割', furigana: 'わ-れる(wa-reru), わ-る(wa-ru), わり(wari), カツ(katsu)', meaning: 'Membagi/Memotong' },
+  { kanji: '営', furigana: 'いとなむ(itonamu), エイ(ei)', meaning: 'Operasi/Bisnis' },
+  { kanji: '自', furigana: 'ジ(ji)', meaning: 'Diri sendiri' },
+  { kanji: '由', furigana: 'ユ(yu), ユウ(yuu)', meaning: 'Sebab' },
+  { kanji: '取', furigana: 'と-る(to-ru), シュ(shu)', meaning: 'Mengambil' },
+  { kanji: '求', furigana: 'もと-める(moto-meru), キュウ(kyuu)', meaning: 'Meminta/Menuntut' },
+  { kanji: '願', furigana: 'ねが-う(nega-u), ガン(gan)', meaning: 'Berdoa/Memohon' },
+  { kanji: '知', furigana: 'し-る(shi-ru), チ(chi)', meaning: 'Mengetahui/Kecerdasan' },
+  { kanji: '台', furigana: 'ダイ(dai), タイ(tai)', meaning: 'Papan/Meja/Dasar' },
+  { kanji: '窓', furigana: 'まど(mado), ソウ(sou)', meaning: 'Jendela' },
+  { kanji: '具', furigana: 'グ(gu)', meaning: 'Peralatan' },
+  { kanji: '器', furigana: 'うつわ(utsuwa), キ(ki)', meaning: 'Wadah/Alat/Organ tubuh' },
+  { kanji: '用', furigana: 'もち-いる(mochi-iru), ヨウ(you)', meaning: 'Menggunakan/Urusan' },
+  { kanji: '服', furigana: 'フク(fuku)', meaning: 'Pakaian' },
+  { kanji: '紙', furigana: 'かみ(kami), シ(shi)', meaning: 'Kertas' },
+  { kanji: '辞', furigana: 'ジ(ji)', meaning: 'Istilah, imbuhan, mengundurkan diri' },
+  { kanji: '雑', furigana: 'ザツ(zatsu), ザッ(za), ゾウ(zou)', meaning: 'Kasar, bermacam-macam' },
+  { kanji: '誌', furigana: 'シ(shi)', meaning: 'Catatan, majalah' },
+{ kanji: '銀', furigana: 'ギン(gin)', meaning: 'Perak' },
+{ kanji: '資', furigana: 'シ(shi)', meaning: 'Modal, dana' },
+{ kanji: '品', furigana: 'しな(shina), ヒン(hin)', meaning: 'Barang, kualitas' },
+{ kanji: '個', furigana: 'コ(ko)', meaning: 'Individual' },
+{ kanji: '価', furigana: 'カ(ka)', meaning: 'Harga' },
+{ kanji: '産', furigana: 'う(u) - まれる(mareru), う(u) - む(mu), サン(san)', meaning: 'Produksi' },
+{ kanji: '期', furigana: 'キ(ki)', meaning: 'Masa' },
+{ kanji: '々', furigana: '-', meaning: 'Simbol pengulangan' },
+{ kanji: '報', furigana: 'ホウ(hou)', meaning: 'Melaporkan, membalas' },
+{ kanji: '告', furigana: 'コク(koku)', meaning: 'Memberitahu, mengumumkan' },
+{ kanji: '心', furigana: 'こころ(kokoro), シン(shin)', meaning: 'Hati, pikiran' },
+{ kanji: '感', furigana: 'カン(kan)', meaning: 'Merasakan' },
+{ kanji: '情', furigana: 'なさ-け(nasa-ke), ジョウ(jou)', meaning: 'Emosi, keadaan' },
+{ kanji: '悲', furigana: 'かな-しい(kana-shii), かな-しむ(kana-shimu), ヒ(hi)', meaning: 'Sedih' },
+{ kanji: '泣', furigana: 'な-く(na-ku)', meaning: 'Menangis' },
+{ kanji: '笑', furigana: 'わら-う(wara-u), ショウ(shou)', meaning: 'Tertawa, tersenyum' },
+{ kanji: '頭', furigana: 'あたま(atama), トウ(tou), ズ(zu)', meaning: 'Kepala, pemimpin' },
+{ kanji: '覚', furigana: 'さ-める(sa-meru), おぼ-える(obo-eru), さ-ます(sa-masu), カク(kaku)', meaning: 'Mengingat/Menghafal' },
+{ kanji: '忘', furigana: 'わす-れる(wasu-reru), ボウ(bou)', meaning: 'Lupa' },
+ { kanji: '考', furigana: 'かんが-える(kanga-eru), コウ(kou)', meaning: 'Berpikir' },
+{ kanji: '伝', furigana: 'つた-わる(tsuta-waru), つた-える(tsuta-eru), デン(den)', meaning: 'Menyampaikan' },
+{ kanji: '代', furigana: 'か-わる(ka-waru), か-える(ka-eru), ダイ(dai), タイ(tai)', meaning: 'Periode' },
+{ kanji: '呼', furigana: 'よ-ぶ(yo-bu), コ(ko)', meaning: 'Memanggil' },
+{ kanji: '焼', furigana: 'や-ける(ya-keru), や-く(ya-ku), ショウ(shou)', meaning: 'Membakar' },
+{ kanji: '曲', furigana: 'ま-がる(ma-garu), ま-げる(ma-geru), キョク(kyoku)', meaning: 'Membelokkan' },
+{ kanji: '脱', furigana: 'ぬ-げる(nu-geru), ぬ-ぐ(nu-gu), ダツ(datsu), ダッ(da)', meaning: 'Melepas pakaian' },
+{ kanji: '別', furigana: 'わか-れる(waka-reru), ベツ(betsu)', meaning: 'Berpisah' },
+{ kanji: '集', furigana: 'あつ-まる(atsu-maru), あつ-める(atsu-meru), シュウ(shuu)', meaning: 'Mengumpulkan' },
+{ kanji: '並', furigana: 'なら-ぶ(nara-bu), なら-べる(nara-beru), なみ(nami), ヘイ(hei)', meaning: 'Berbaris' },
+{ kanji: '喜', furigana: 'よろこ-ぶ(yoroko-bu), キ(ki)', meaning: 'Kesenangan' },
+{ kanji: '驚', furigana: 'おどろ-く(odoro-ku), キョウ(kyou)', meaning: 'Terkejut' },
+{ kanji: '細', furigana: 'ほそ-い(hoso-i), こま-かい(koma-kai), サイ(sai)', meaning: 'Kurus/Tipis' },
+{ kanji: '太', furigana: 'ふと-い(futo-i), ふと-る(futo-ru), タイ(tai)', meaning: 'Gemuk/Tebal' },
+{ kanji: '重', furigana: 'おも-い(omo-i), ジュウ(juu)', meaning: 'Berat' },
+{ kanji: '軽', furigana: 'かる-い(karu-i), ケイ(kei)', meaning: 'Ringan' },
+{ kanji: '狭', furigana: 'せま-い(sema-i), キョウ(kyou)', meaning: 'Sempit' },
+{ kanji: '弱', furigana: 'よわ-い(yowa-i), よわ-る(yowa-ru), ジャク(jaku)', meaning: 'Lemah' },
+{ kanji: '眠', furigana: 'ねむ-い(nemu-i), ねむ-る(nemu-ru), ミン(min)', meaning: 'Ngantuk' },
+{ kanji: '苦', furigana: 'くる-しい(kuru-shii), くる-しむ(kuru-shimu), にが-い(niga-i), ク(ku)', meaning: 'Pahit, menderita, sakit' },
+{ kanji: '簡', furigana: 'カン(kan)', meaning: 'Mudah' },
+{ kanji: '単', furigana: 'タン(tan)', meaning: 'Mudah' },
+{ kanji: '空', furigana: 'あ-く(a-ku), そら(sora), あ-ける(a-keru), クウ(kuu)', meaning: 'Langit' },
+{ kanji: '港', furigana: 'みなと(minato), コウ(kou)', meaning: 'Pelabuhan' },
+{ kanji: '飛', furigana: 'と-ぶ(to-bu), と-ばす(to-basu), ヒ(hi)', meaning: 'Terbang' },
+{ kanji: '階', furigana: 'カイ(kai)', meaning: 'Lantai' },
+{ kanji: '建', furigana: 'た-つ(ta-tsu), た-てる(ta-teru), ケン(ken)', meaning: 'Membangun' },
+{ kanji: '設', furigana: 'もうける(moukeru), セツ(setsu), セッ(se)', meaning: 'Mendirikan' },
+{ kanji: '完', furigana: 'カン(kan)', meaning: 'Selesai' },
+{ kanji: '成', furigana: 'な-る(na-ru) / なり(nari), セイ(sei)', meaning: 'Menjadi' },
+{ kanji: '費', furigana: 'ヒ(hi)', meaning: 'Menghabiskan' },
+{ kanji: '放', furigana: 'ホウ(hou)', meaning: 'Melepaskan' },
+  { kanji: '位', furigana: 'くらい(kurai), イ(i)', meaning: 'Tingkat' },
+{ kanji: '置', furigana: 'お-く(o-ku), チ(chi)', meaning: 'Meletakkan' },
+{ kanji: '横', furigana: 'よこ(yoko), オウ(ou)', meaning: 'Sebelah' },
+{ kanji: '向', furigana: 'む-く(mu-ku), む-こう(mu-kou), む-ける(mu-keru), コウ(kou)', meaning: 'Mengarahkan, Seberang' },
+{ kanji: '原', furigana: 'はら(hara), ゲン(gen)', meaning: 'Asal' },
+{ kanji: '平', furigana: 'たい-ら(tai-ra), ヘイ(hei), ビョウ(byou)', meaning: 'Datar' },
+{ kanji: '野', furigana: 'の(no), ヤ(ya)', meaning: 'Bidang' },
+{ kanji: '風', furigana: 'かぜ(kaze), フウ(fuu)', meaning: 'Angin' },
+{ kanji: '両', furigana: 'リョウ(ryou)', meaning: 'Keduanya' },
+{ kanji: '橋', furigana: 'はし(hashi), キョウ(kyou)', meaning: 'Jembatan' },
+{ kanji: '老', furigana: 'お-いる(o-iru), ロウ(rou)', meaning: 'Menua/Tua' },
+{ kanji: '族', furigana: 'ゾク(zoku)', meaning: 'Suku' },
+{ kanji: '配', furigana: 'くば-る(kuba-ru), ハイ(hai)', meaning: 'Mendistribusikan' },
+{ kanji: '術', furigana: 'ジュツ(jutsu)', meaning: 'Kesenian' },
+{ kanji: '退', furigana: 'タイ(tai)', meaning: 'Mundur' },
+{ kanji: '効', furigana: 'き-く(ki-ku), コウ(kou)', meaning: 'Efek' },
+{ kanji: '民', furigana: 'ミン(min)', meaning: 'Rakyat/Penduduk' },
+{ kanji: '訪', furigana: 'たず-ねる(tazu-neru), おとず-れる(otozu-reru), ホウ(hou)', meaning: 'Mengunjungi' },
+{ kanji: '顔', furigana: 'かお(kao), ガン(gan)', meaning: 'Muka' },
+{ kanji: '歯', furigana: 'は(ha), シ(shi)', meaning: 'Gigi' },
+{ kanji: '卒', furigana: 'ソツ(sotsu)', meaning: 'Lulus' },
+{ kanji: '論', furigana: 'ロン(ron)', meaning: 'Membahas' },
+{ kanji: '実', furigana: 'み(mi), みの-る(mino-ru), ジツ(jitsu)', meaning: 'Kenyataan' },
+{ kanji: '調', furigana: 'しら-べる(shira-beru), チョウ(chou)', meaning: 'Memeriksa' },
+{ kanji: '必', furigana: 'かなら-ず(kanara-zu), ヒツ(hitsu)', meaning: 'Pasti' },
+{ kanji: '要', furigana: 'い-る(i-ru), ヨウ(you)', meaning: 'Butuh/Perlu' },
+{ kanji: '類', furigana: 'ルイ(rui)', meaning: 'Sortir' },
+{ kanji: '得', furigana: 'え-る(e-ru), トク(toku)', meaning: 'Mendapatkan' },
+{ kanji: '失', furigana: 'うしな-う(ushina-u), シツ(shitsu)', meaning: 'Kehilangan' },
+{ kanji: '礼', furigana: 'レイ(rei)', meaning: 'Salam hormat' },
+{ kanji: '増', furigana: 'ふ-える(fu-eru), ふ-やす(fu-yasu), ゾウ(zou)', meaning: 'Menambah/Meningkat' },
+{ kanji: '加', furigana: 'くわ-わる(kuwa-waru), くわ-える(kuwa-eru), カ(ka)', meaning: 'Bergabung' },
+{ kanji: '減', furigana: 'へ-る(he-ru), へ-らす(he-rasu), ゲン(gen)', meaning: 'Mengurangi/Menurun' },
+{ kanji: '変', furigana: 'か-わる(ka-waru), か-える(ka-eru), ヘン(hen)', meaning: 'Berubah' },
+{ kanji: '移', furigana: 'うつ-る(utsu-ru), うつ-す(utsu-su), イ(i)', meaning: 'Memindahkan' },
+{ kanji: '続', furigana: 'つづ-く(tsuzu-ku), つづ-ける(tsuzu-keru), ゾク(zoku)', meaning: 'Melanjutkan' },
+{ kanji: '過', furigana: 'す-ぎる(su-giru), す-ごす(su-gosu), カ(ka)', meaning: 'Melewati' },
+{ kanji: '進', furigana: 'すす-む(susu-mu), すす-める(susu-meru), シン(shin)', meaning: 'Maju/Melangkah' },
+{ kanji: '以', furigana: 'イ(i)', meaning: 'Dari' },
+{ kanji: '美', furigana: 'うつく-しい(utsuku-shii), ビ(bi)', meaning: 'Keindahan' },
+{ kanji: '比', furigana: 'くら-べる(kura-beru), ヒ(hi)', meaning: 'Membandingkan' },
+{ kanji: '較', furigana: 'カク(kaku)', meaning: 'Kontras' },
+{ kanji: '反', furigana: 'ハン(han)', meaning: 'Anti' },
+{ kanji: '対', furigana: 'タイ(tai), ツイ(tsui)', meaning: 'Lawan' },
+{ kanji: '賛', furigana: 'サン(san)', meaning: 'Setuju' },
+{ kanji: '共', furigana: 'とも(tomo), キョウ(kyou)', meaning: 'Bersama' },
+{ kanji: '直', furigana: 'なお-る(nao-ru), なお-す(nao-su), チョク(choku)', meaning: 'Mengoreksi/Langsung' },
+{ kanji: '表', furigana: 'あらわ-す(arawa-su), ヒョウ(hyou)', meaning: 'Mengekspresikan' },
+{ kanji: '現', furigana: 'あらわ-れる(arawa-reru), ゲン(gen)', meaning: 'Menampilkan' },
+{ kanji: '初', furigana: 'はじ-め(haji-me), はじ-めて(haji-mete), ショ(sho)', meaning: 'Pertama kali' },
+{ kanji: '全', furigana: 'まった-く(matta-ku), ゼン(zen)', meaning: 'Sama sekali' },
+{ kanji: '最', furigana: 'もっと-も(motto-mo), サイ(sai)', meaning: 'Paling' },
+{ kanji: '無', furigana: 'な-い(na-i), ム(mu), ブ(bu)', meaning: 'Bukan' },
+{ kanji: '非', furigana: 'ヒ(hi)', meaning: 'Tidak' },
+{ kanji: '第', furigana: 'ダイ(dai)', meaning: 'Pangkat' },
+{ kanji: '的', furigana: 'テキ(teki)', meaning: 'Seperti' },
+{ kanji: '性', furigana: 'セイ(sei), ショウ(shou)', meaning: 'Jenis kelamin' },
+{ kanji: '法', furigana: 'ホウ(hou), ポウ(pou)', meaning: 'Aturan' },
+{ kanji: '制', furigana: 'セイ(sei)', meaning: 'Sistem' },
+{ kanji: '課', furigana: 'カ(ka)', meaning: 'Tugas' },
+];
+
 const DEFAULT_CARDS = {
   pengolah_makanan: DEFAULT_CARDS_PENGOLAH_MAKANAN,
-  pertanian: DEFAULT_CARDS_PERTANIAN
+  pertanian: DEFAULT_CARDS_PERTANIAN,
+  kanji_satuan: DEFAULT_CARDS_KANJI_SATUAN
 };
 
 function loadAllCards() {
@@ -1632,9 +2059,9 @@ function loadAllCards() {
   // Migrasi dari format lama (array tunggal tanpa kategori) jika ada
   const legacy = JSON.parse(localStorage.getItem('kanji_cards') || 'null');
   if(Array.isArray(legacy)) {
-    return { pengolah_makanan: legacy, pertanian: [...DEFAULT_CARDS_PERTANIAN] };
+    return { pengolah_makanan: legacy, pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN] };
   }
-  return { pengolah_makanan: [...DEFAULT_CARDS_PENGOLAH_MAKANAN], pertanian: [...DEFAULT_CARDS_PERTANIAN] };
+  return { pengolah_makanan: [...DEFAULT_CARDS_PENGOLAH_MAKANAN], pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN] };
 }
 
 let allCards = loadAllCards();
@@ -1686,47 +2113,8 @@ function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['browse','game'][i]===name));
-  if(name==='manage') renderManage();
   if(name==='browse') { renderCategoryTabs('browse-cat-tabs'); renderBrowseLazy(); }
   if(name==='game')   { renderCategoryTabs('game-cat-tabs'); renderGameStart(); }
-}
-
-// ── MANAGE ──
-function addCard() {
-  const k=document.getElementById('inp-kanji').value.trim();
-  const f=document.getElementById('inp-furi').value.trim();
-  const m=document.getElementById('inp-mean').value.trim();
-  if(!k||!f||!m){ shake('inp-kanji'); return; }
-  cards.push({kanji:k, furigana:f, meaning:m});
-  save(); renderManage();
-  ['inp-kanji','inp-furi','inp-mean'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('inp-kanji').focus();
-}
-
-function deleteCard(i) { cards.splice(i,1); save(); renderManage(); }
-
-function renderManage() {
-  const list = document.getElementById('manage-list');
-  const empty = document.getElementById('manage-empty');
-  document.getElementById('card-count').textContent = cards.length + ' kartu';
-  if(!cards.length){ list.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  list.innerHTML = cards.map((c,i) => `
-    <div class="fc-item">
-      <div class="fc-num">#${String(i+1).padStart(2,'0')}</div>
-      <div class="fc-kanji">${c.kanji}</div>
-      <div class="fc-furi">${c.furigana}</div>
-      <div class="fc-mean fc-mean-col">${c.meaning}</div>
-      <button class="fc-del" onclick="deleteCard(${i})">✕</button>
-    </div>
-  `).join('');
-}
-
-function shake(id) {
-  const el=document.getElementById(id);
-  el.style.borderColor='var(--red)';
-  el.style.boxShadow='0 0 0 3px rgba(255,61,90,.2)';
-  setTimeout(()=>{ el.style.borderColor=''; el.style.boxShadow=''; },600);
 }
 
 // ── BROWSE — Lazy/chunked render for performance ──
@@ -2091,13 +2479,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderCategoryTabs('browse-cat-tabs');
   renderBrowseLazy();
 
-  // Manage keyboard shortcuts (if manage inputs exist)
-  ['inp-kanji','inp-furi','inp-mean'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.addEventListener('keydown',e=>{ if(e.key==='Enter') addCard(); });
-  });
-  // Also init manage if needed
-  renderManage();
 });
 </script>
 </body>
