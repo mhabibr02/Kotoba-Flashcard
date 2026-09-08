@@ -68,7 +68,7 @@
 
   /* ══════════════════════════════
      BROWSE PAGE
-     Flip cards: horizontal, auto height — no ellipsis
+     Static cards: nomor, kanji, furigana, arti — semua langsung terlihat
   ══════════════════════════════ */
   .category-tabs {
     display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap; align-items:center; justify-content:center;
@@ -86,7 +86,7 @@
   }
 
   .browse-controls {
-    display:flex; gap:12px; margin-bottom:28px; flex-wrap:wrap; align-items:center; justify-content:center;
+    display:flex; gap:12px; margin:20px 0 28px; flex-wrap:wrap; align-items:center; justify-content:center;
   }
   .btn-ctrl {
     padding:10px 20px; border-radius:50px; border:1px solid var(--border);
@@ -96,83 +96,48 @@
   .btn-ctrl:hover { border-color:var(--blue); color:var(--blue); }
   .btn-ctrl.primary { background:linear-gradient(135deg,var(--red),var(--orange)); border-color:transparent; color:#fff; }
 
-  .flip-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; }
+  .browse-search-actions { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
 
-  /* IMPORTANT: no fixed height — let content determine height.
-     We use a "paired height" trick via JS after render. */
-  .flip-card { perspective:1000px; cursor:pointer; }
+  .browse-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
 
-  /* flip-inner must match the card height.
-     We set it via JS to max(front, back) natural height. */
-  .flip-card-wrap {
-    position:relative;
-    transition: transform .6s cubic-bezier(.4,0,.2,1);
-    transform-style:preserve-3d;
+  /* Static card: number, kanji, furigana, meaning stacked top-to-bottom.
+     No flip, no back face — everything visible at once. */
+  .browse-card {
+    background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:20px; display:flex; flex-direction:column; gap:10px;
+    transition:transform .2s, box-shadow .2s;
   }
-  .flip-card.flipped .flip-card-wrap { transform: rotateY(180deg); }
+  .browse-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.35); }
 
-  .flip-front, .flip-back {
-    overflow:hidden;
-    border-radius:16px; border:1px solid var(--border);
-    padding:18px 20px;
-    display:flex; align-items:center; justify-content:center; gap:16px;
-    /* No overflow hidden, no ellipsis */
+  .browse-card-num {
+    font-family:'Zen Dots'; font-size:.75rem; color:var(--muted); letter-spacing:1px;
+    text-align:center; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,.08);
   }
-  /* Front face: shown normally */
-  .flip-front {
-    background: var(--card);
-    flex-direction:column;
-    min-height:420px;
-    justify-content:space-between;
-  }
-  /* Back face: absolutely positioned on top, hidden by backface-visibility */
-  .flip-back {
-    position:absolute; inset:0;
-    background:linear-gradient(135deg,#1a1a3e,#0d1a2e);
-    transform: rotateY(180deg);
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
-    flex-direction:column; gap:0;
-    min-height:420px;
-  }
-  /* Front face also needs backface hidden when flipped */
-  .flip-front {
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
-  }
-
-  .flip-front .fn { font-family:'Zen Dots'; font-size:1rem; color:var(--muted); text-align:center; width:100%; padding-bottom:14px; border-bottom:1px solid rgba(255,255,255,.08); white-space:nowrap; }
-  .flip-front .fk {
+  .browse-card-kanji {
     font-family:'Noto Sans JP'; font-weight:900;
-    font-size:clamp(2rem,4vw,3.5rem);
-    text-align:center; flex:1; line-height:1.2; display:flex; align-items:center; justify-content:center; padding:20px; overflow-wrap:anywhere; word-break:break-word; overflow-wrap:anywhere; white-space:normal;
+    font-size:clamp(2rem,4vw,3rem);
+    text-align:center; line-height:1.2; padding:8px 0;
+    overflow-wrap:anywhere; word-break:break-word; white-space:normal;
   }
-  .flip-front .hint { font-size:.6rem; color:var(--muted); min-width:40px; text-align:center; flex-shrink:0; }
+  .browse-card-divider { height:1px; background:rgba(255,255,255,.08); margin:2px 0; }
+  .browse-card-row { display:flex; flex-direction:column; gap:3px; text-align:center; padding:2px 4px; }
+  .browse-card-label { font-size:.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .browse-card-value { font-size:.92rem; color:var(--text); word-break:break-word; line-height:1.4; }
+  .browse-card-value.furi { font-family:'Noto Sans JP'; color:var(--yellow); font-weight:700; }
 
-  .flip-back-inner { display:flex; flex-direction:column; align-items:stretch; width:100%; min-height:100%; gap:0; }
-  .back-furi-wrap, .back-mean-wrap {
-    flex:1; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:4px; padding:4px 12px;
-  }
-  .back-divider { height:1px; width:100%; background:rgba(255,255,255,.1); flex-shrink:0; margin:0; }
-  .back-label { font-size:.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-  /* No ellipsis, allow wrap */
-  .back-furi { font-family:'Noto Sans JP'; font-size:clamp(.8rem,2vw,1.05rem); font-weight:700; color:var(--yellow); text-align:center; word-break:break-word; line-height:1.4; }
-  .back-mean { font-size:clamp(.75rem,1.8vw,1rem); font-weight:600; color:var(--text); text-align:center; word-break:break-word; line-height:1.4; }
-
-  /* color borders */
-  .flip-card:nth-child(6n+1) .flip-front { border-color:rgba(255,61,90,.35); }
-  .flip-card:nth-child(6n+1) .flip-front .fk { color:var(--red); }
-  .flip-card:nth-child(6n+2) .flip-front { border-color:rgba(255,122,47,.35); }
-  .flip-card:nth-child(6n+2) .flip-front .fk { color:var(--orange); }
-  .flip-card:nth-child(6n+3) .flip-front { border-color:rgba(255,210,63,.35); }
-  .flip-card:nth-child(6n+3) .flip-front .fk { color:var(--yellow); }
-  .flip-card:nth-child(6n+4) .flip-front { border-color:rgba(62,207,160,.35); }
-  .flip-card:nth-child(6n+4) .flip-front .fk { color:var(--green); }
-  .flip-card:nth-child(6n+5) .flip-front { border-color:rgba(58,134,255,.35); }
-  .flip-card:nth-child(6n+5) .flip-front .fk { color:var(--blue); }
-  .flip-card:nth-child(6n+6) .flip-front { border-color:rgba(247,37,133,.35); }
-  .flip-card:nth-child(6n+6) .flip-front .fk { color:var(--pink); }
+  /* color accents */
+  .browse-card:nth-child(6n+1) { border-color:rgba(255,61,90,.35); }
+  .browse-card:nth-child(6n+1) .browse-card-kanji { color:var(--red); }
+  .browse-card:nth-child(6n+2) { border-color:rgba(255,122,47,.35); }
+  .browse-card:nth-child(6n+2) .browse-card-kanji { color:var(--orange); }
+  .browse-card:nth-child(6n+3) { border-color:rgba(255,210,63,.35); }
+  .browse-card:nth-child(6n+3) .browse-card-kanji { color:var(--yellow); }
+  .browse-card:nth-child(6n+4) { border-color:rgba(62,207,160,.35); }
+  .browse-card:nth-child(6n+4) .browse-card-kanji { color:var(--green); }
+  .browse-card:nth-child(6n+5) { border-color:rgba(58,134,255,.35); }
+  .browse-card:nth-child(6n+5) .browse-card-kanji { color:var(--blue); }
+  .browse-card:nth-child(6n+6) { border-color:rgba(247,37,133,.35); }
+  .browse-card:nth-child(6n+6) .browse-card-kanji { color:var(--pink); }
 
   /* ══════════════════════════════
      GAME PAGE
@@ -439,5 +404,5 @@ margin:0;
   .empty-state .e-icon { font-size:4rem; margin-bottom:16px; }
 
   @media(max-width:650px) {
-    .flip-grid { grid-template-columns:1fr; }
+    .browse-card-grid { grid-template-columns:1fr; }
   }
