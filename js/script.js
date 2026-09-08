@@ -1,16 +1,18 @@
 const CATEGORY_META = {
-  pengolah_makanan: { label: 'Pengolah Makanan', icon: '🍱' },
-  pertanian:         { label: 'Pertanian',         icon: '🌾' },
-  kanji_satuan:      { label: 'Kanji Satuan',      icon: '📏' }
+  pengolah_makanan: { label: 'Pengolah Makanan', icon: '(飲食)' },
+  pertanian:         { label: 'Pertanian',         icon: '(農業)' },
+  kanji_satuan:      { label: 'Kanji Satuan',      icon: '(漢字)' },
+  kotoba_n3:      { label: 'Kotoba N3',      icon: '(言葉)' },
 };
 
 // Menggabungkan data dari file kelompok flashcard terpisah
-// (data-pengolah-makanan.js, data-pertanian.js, data-kanji-satuan.js)
+// (data-pengolah-makanan.js, data-pertanian.js, data-kanji-satuan.js, data-kotoba-n3)
 
 const DEFAULT_CARDS = {
   pengolah_makanan: DEFAULT_CARDS_PENGOLAH_MAKANAN,
   pertanian: DEFAULT_CARDS_PERTANIAN,
-  kanji_satuan: DEFAULT_CARDS_KANJI_SATUAN
+  kanji_satuan: DEFAULT_CARDS_KANJI_SATUAN,
+  kotoba_n3: DEFAULT_CARDS_KOTOBA_N3,
 };
 
 function loadAllCards() {
@@ -25,9 +27,9 @@ function loadAllCards() {
   // Migrasi dari format lama (array tunggal tanpa kategori) jika ada
   const legacy = JSON.parse(localStorage.getItem('kanji_cards') || 'null');
   if(Array.isArray(legacy)) {
-    return { pengolah_makanan: legacy, pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN] };
+    return { pengolah_makanan: legacy, pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN], kotoba_n3: [...DEFAULT_CARDS_KOTOBA_N3] };
   }
-  return { pengolah_makanan: [...DEFAULT_CARDS_PENGOLAH_MAKANAN], pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN] };
+  return { pengolah_makanan: [...DEFAULT_CARDS_PENGOLAH_MAKANAN], pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN], kotoba_n3: [...DEFAULT_CARDS_KOTOBA_N3] };
 }
 
 let allCards = loadAllCards();
@@ -52,6 +54,12 @@ function setCategory(cat) {
   cards = allCards[currentCategory];
   localStorage.setItem('kanji_current_category', currentCategory);
   syncCategoryUI();
+  // Reset filter pencarian range browse setiap ganti kategori (nomor kartu berbeda per kategori)
+  browseFilter = null;
+  const bFromEl = document.getElementById('browse-search-from');
+  const bToEl   = document.getElementById('browse-search-to');
+  if(bFromEl) bFromEl.value = '';
+  if(bToEl)   bToEl.value = '';
   // Refresh halaman yang sedang aktif agar menampilkan kartu kategori baru
   const activePage = document.querySelector('.page.active');
   if(activePage && activePage.id === 'page-browse') renderBrowseLazy();
@@ -84,20 +92,49 @@ function showPage(name) {
 }
 
 // ── BROWSE — Lazy/chunked render for performance ──
-const BROWSE_CHUNK = 40; // render 40 cards at a time
+// Kartu ditampilkan statis (nomor, kanji, furigana, arti sekaligus — tanpa flip).
+// Bisa difilter dengan range nomor lewat fitur pencarian di atas grid.
+const BROWSE_CHUNK = 40; // render 40 kartu setiap kali
 let browseRenderedCount = 0;
 let browseSentinel = null;
+let browseObserver = null;
+let browseFilter = null; // null = tampilkan semua, atau {from, to}
+
+// Mengembalikan daftar kartu yang akan ditampilkan, sudah diberi nomor asli (_origNum)
+function getBrowseList() {
+  const numbered = cards.map((c, i) => ({ ...c, _origNum: i + 1 }));
+  if (!browseFilter) return numbered;
+  const from = Math.max(1, browseFilter.from);
+  const to   = Math.min(cards.length, browseFilter.to);
+  if (from > to) return [];
+  return numbered.slice(from - 1, to);
+}
 
 function renderBrowseLazy() {
-  const grid = document.getElementById('flip-grid');
+  const grid = document.getElementById('browse-grid');
   const empty = document.getElementById('browse-empty');
+  const list = getBrowseList();
 
-  if(!cards.length){ grid.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
+  syncBrowseSearchInfo();
 
-  // Clean up old observer if any
-  if(browseSentinel) {
-    if(browseObserver) browseObserver.disconnect();
+  if (!cards.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    empty.querySelector('p').textContent = 'Tidak ada kartu. Tambahkan dulu di halaman Kelola!';
+    return;
+  }
+  if (!list.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    empty.querySelector('p').textContent = 'Tidak ada kartu pada range nomor tersebut.';
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Bersihkan observer lama jika ada
+  if (browseSentinel) {
+    if (browseObserver) browseObserver.disconnect();
+    browseSentinel.remove();
     browseSentinel = null;
   }
 
@@ -105,46 +142,35 @@ function renderBrowseLazy() {
   browseRenderedCount = 0;
   grid.innerHTML = '';
 
-  // Render first chunk immediately (no delay = instant display)
-  appendBrowseChunk(grid);
+  // Render chunk pertama langsung (tanpa delay = tampil instan)
+  appendBrowseChunk(grid, list);
 
-  // If more cards remain, set up intersection observer for infinite scroll
-  if(browseRenderedCount < cards.length) {
-    setupBrowseObserver(grid);
+  // Jika masih ada sisa kartu, pasang intersection observer untuk infinite scroll
+  if (browseRenderedCount < list.length) {
+    setupBrowseObserver(grid, list);
   }
 }
 
-let browseObserver = null;
-
-function appendBrowseChunk(grid) {
+function appendBrowseChunk(grid, list) {
   const start = browseRenderedCount;
-  const end = Math.min(start + BROWSE_CHUNK, cards.length);
+  const end = Math.min(start + BROWSE_CHUNK, list.length);
   const fragment = document.createDocumentFragment();
 
-  for(let i = start; i < end; i++) {
-    const c = cards[i];
+  for (let i = start; i < end; i++) {
+    const c = list[i];
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `
-      <div class="flip-card" id="fc-${i}" onclick="toggleFlip(${i})">
-        <div class="flip-card-wrap" id="fcw-${i}">
-          <div class="flip-front" id="fcf-${i}">
-            <div class="fn">#${String(i+1).padStart(2,'0')}</div>
-            <div class="fk">${c.kanji}</div>
-            <div class="hint">Tap</div>
-          </div>
-          <div class="flip-back">
-            <div class="flip-back-inner">
-              <div class="back-furi-wrap">
-                <div class="back-label">Furigana</div>
-                <div class="back-furi">${c.furigana}</div>
-              </div>
-              <div class="back-divider"></div>
-              <div class="back-mean-wrap">
-                <div class="back-label">Arti</div>
-                <div class="back-mean">${c.meaning}</div>
-              </div>
-            </div>
-          </div>
+      <div class="browse-card">
+        <div class="browse-card-num">#${String(c._origNum).padStart(2, '0')}</div>
+        <div class="browse-card-kanji">${c.kanji}</div>
+        <div class="browse-card-divider"></div>
+        <div class="browse-card-row">
+          <span class="browse-card-label">Furigana</span>
+          <span class="browse-card-value furi">${c.furigana}</span>
+        </div>
+        <div class="browse-card-row">
+          <span class="browse-card-label">Arti</span>
+          <span class="browse-card-value">${c.meaning}</span>
         </div>
       </div>
     `;
@@ -152,33 +178,21 @@ function appendBrowseChunk(grid) {
   }
   grid.appendChild(fragment);
   browseRenderedCount = end;
-
-  // Fix heights after paint
-  requestAnimationFrame(() => {
-    for(let i = start; i < end; i++) {
-      const front = document.getElementById('fcf-'+i);
-      const wrap  = document.getElementById('fcw-'+i);
-      if(front && wrap){
-        const h = Math.max(front.offsetHeight, 90);
-        wrap.style.height = h + 'px';
-      }
-    }
-  });
 }
 
-function setupBrowseObserver(grid) {
-  // Create a sentinel element at the bottom of the grid
+function setupBrowseObserver(grid, list) {
+  // Buat elemen sentinel di bawah grid
   browseSentinel = document.createElement('div');
   browseSentinel.style.height = '1px';
   grid.after(browseSentinel);
 
   browseObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if(entry.isIntersecting && browseRenderedCount < cards.length) {
-        appendBrowseChunk(grid);
-        if(browseRenderedCount >= cards.length) {
+      if (entry.isIntersecting && browseRenderedCount < list.length) {
+        appendBrowseChunk(grid, list);
+        if (browseRenderedCount >= list.length) {
           browseObserver.disconnect();
-          if(browseSentinel) browseSentinel.remove();
+          if (browseSentinel) browseSentinel.remove();
         }
       }
     });
@@ -187,8 +201,57 @@ function setupBrowseObserver(grid) {
   browseObserver.observe(browseSentinel);
 }
 
-function toggleFlip(i) { document.getElementById('fc-'+i).classList.toggle('flipped'); }
-function flipAll(state) { document.querySelectorAll('.flip-card').forEach(c=>c.classList.toggle('flipped',state)); }
+// ── BROWSE — Cari kartu berdasarkan range nomor ──
+function syncBrowseSearchInfo() {
+  const info = document.getElementById('browse-search-info');
+  if (!info) return;
+  if (!browseFilter) {
+    info.className = 'range-info-row';
+    info.textContent = `📦 Menampilkan semua ${cards.length} kartu`;
+    return;
+  }
+  const from = Math.max(1, browseFilter.from);
+  const to   = Math.min(cards.length, browseFilter.to);
+  const count = Math.max(0, to - from + 1);
+  if (browseFilter.from > browseFilter.to || count === 0) {
+    info.className = 'range-info-row warn';
+    info.textContent = '⚠️ Tidak ada kartu pada range nomor tersebut.';
+  } else {
+    info.className = 'range-info-row';
+    info.textContent = `📦 Menampilkan ${count} kartu (No. ${from} – ${to} dari ${cards.length} total)`;
+  }
+}
+
+function searchBrowseRange() {
+  const fromEl = document.getElementById('browse-search-from');
+  const toEl   = document.getElementById('browse-search-to');
+  const from = parseInt(fromEl.value) || 1;
+  const to   = parseInt(toEl.value)   || cards.length;
+
+  if (from < 1 || from > to) {
+    const info = document.getElementById('browse-search-info');
+    info.className = 'range-info-row warn';
+    info.textContent = '⚠️ Range tidak valid. Periksa kembali angkanya.';
+    [fromEl, toEl].forEach(el => {
+      el.style.borderColor = 'var(--red)';
+      el.style.boxShadow = '0 0 0 3px rgba(255,61,90,.2)';
+      setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 600);
+    });
+    return;
+  }
+
+  browseFilter = { from, to };
+  renderBrowseLazy();
+}
+
+function resetBrowseRange() {
+  browseFilter = null;
+  const fromEl = document.getElementById('browse-search-from');
+  const toEl   = document.getElementById('browse-search-to');
+  if (fromEl) fromEl.value = '';
+  if (toEl)   toEl.value = '';
+  renderBrowseLazy();
+}
 
 // ── GAME ──
 let rangeMode = 'all'; // 'all' | 'range'

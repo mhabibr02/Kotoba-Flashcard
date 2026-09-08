@@ -400,7 +400,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '報', furigana: 'ホウ(hou)', meaning: 'Melaporkan, membalas' },
   { kanji: '告', furigana: 'つげ-る(tsuge-ru), コク(koku)', meaning: 'Memberitahu' },
   { kanji: '心', furigana: 'こころ(kokoro), シン(shin)', meaning: 'Hati' },
-  { kanji: '感', furigana: 'カン(kan)', meaning: 'Merasakan' },
+  { kanji: '感', furigana: 'カン(kan)', meaning: 'Merasa' },
   { kanji: '情', furigana: 'なさ-け(nasa-ke), ジョウ(jou)', meaning: 'Emosi, keadaan' },
   { kanji: '悲', furigana: 'かな-しい(kana-shii), かな-しむ(kana-shimu), ヒ(hi)', meaning: 'Sedih' },
   { kanji: '泣', furigana: 'な-く(na-ku)', meaning: 'Menangis' },
