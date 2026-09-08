@@ -25,17 +25,32 @@
     <div class="section-title">
       <div class="badge" style="background:linear-gradient(135deg,var(--orange),var(--yellow))">🗂️</div>
       Browse Flashcard
-      <span style="color:var(--muted);font-size:.85rem;font-weight:400;">· Klik kartu untuk membalik</span>
+      <span style="color:var(--muted);font-size:.85rem;font-weight:400;">· Nomor, kanji, furigana &amp; arti langsung terlihat</span>
     </div>
     <div class="category-tabs" id="browse-cat-tabs"></div>
+
+    <!-- SEARCH BY RANGE PANEL -->
+    <div class="range-panel" id="browse-search-panel">
+      <div class="range-panel-title">&#x1F50D; Cari Kartu Berdasarkan Nomor</div>
+      <div class="range-inputs">
+        <input type="number" id="browse-search-from" placeholder="Dari" min="1" onkeydown="if(event.key==='Enter')searchBrowseRange()">
+        <span class="range-sep">&#x2014;</span>
+        <input type="number" id="browse-search-to" placeholder="Sampai" min="1" onkeydown="if(event.key==='Enter')searchBrowseRange()">
+      </div>
+      <div class="browse-search-actions">
+        <button class="btn-ctrl primary" onclick="searchBrowseRange()">&#x1F50D; Cari</button>
+        <button class="btn-ctrl" onclick="resetBrowseRange()">&#x21BA; Tampilkan Semua</button>
+      </div>
+      <div class="range-info-row" id="browse-search-info">&#x1F4E6; Menampilkan semua kartu</div>
+    </div>
+
     <div class="browse-controls">
-      <button class="btn-ctrl" onclick="flipAll(true)">Buka Semua</button>
-      <button class="btn-ctrl" onclick="flipAll(false)">Tutup Semua</button>
       <button class="btn-ctrl primary" onclick="showPage('game')">🎮 Main Game</button>
     </div>
-    <div id="flip-grid" class="flip-grid"></div>
+
+    <div id="browse-grid" class="browse-card-grid"></div>
     <div id="browse-empty" class="empty-state" style="display:none;">
-      <div class="e-icon">📭</div><p>Tidak ada kartu. Tambahkan dulu di halaman Kelola!</p>
+      <div class="e-icon">📭</div><p>Tidak ada kartu.</p>
     </div>
   </div>
 
@@ -148,6 +163,7 @@
 <script src="js/data-pengolah-makanan.js"></script>
 <script src="js/data-pertanian.js"></script>
 <script src="js/data-kanji-satuan.js"></script>
+<script src="js/data-kotoba-n3.js"></script>
 
 <!-- Logika utama aplikasi -->
 <script src="js/script.js"></script>
