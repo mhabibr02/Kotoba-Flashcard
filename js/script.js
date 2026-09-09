@@ -3,16 +3,18 @@ const CATEGORY_META = {
   pertanian:         { label: 'Pertanian',         icon: '(農業)' },
   kanji_satuan:      { label: 'Kanji Satuan',      icon: '(漢字)' },
   kotoba_n3:      { label: 'Kotoba N3',      icon: '(言葉)' },
+  kotoba_n4:      { label: 'Kotoba N4',      icon: '(言葉)' },
 };
 
 // Menggabungkan data dari file kelompok flashcard terpisah
-// (data-pengolah-makanan.js, data-pertanian.js, data-kanji-satuan.js, data-kotoba-n3)
+// (data-pengolah-makanan.js, data-pertanian.js, data-kanji-satuan.js, data-kotoba-n3, data-kotoba-n4)
 
 const DEFAULT_CARDS = {
   pengolah_makanan: DEFAULT_CARDS_PENGOLAH_MAKANAN,
   pertanian: DEFAULT_CARDS_PERTANIAN,
   kanji_satuan: DEFAULT_CARDS_KANJI_SATUAN,
   kotoba_n3: DEFAULT_CARDS_KOTOBA_N3,
+  kotoba_n4: DEFAULT_CARDS_KOTOBA_N4,
 };
 
 function loadAllCards() {
@@ -27,9 +29,9 @@ function loadAllCards() {
   // Migrasi dari format lama (array tunggal tanpa kategori) jika ada
   const legacy = JSON.parse(localStorage.getItem('kanji_cards') || 'null');
   if(Array.isArray(legacy)) {
-    return { pengolah_makanan: legacy, pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN], kotoba_n3: [...DEFAULT_CARDS_KOTOBA_N3] };
+    return { pengolah_makanan: legacy, pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN], kotoba_n3: [...DEFAULT_CARDS_KOTOBA_N3], kotoba_n4: [...DEFAULT_CARDS_KOTOBA_N4] };
   }
-  return { pengolah_makanan: [...DEFAULT_CARDS_PENGOLAH_MAKANAN], pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN], kotoba_n3: [...DEFAULT_CARDS_KOTOBA_N3] };
+  return { pengolah_makanan: [...DEFAULT_CARDS_PENGOLAH_MAKANAN], pertanian: [...DEFAULT_CARDS_PERTANIAN], kanji_satuan: [...DEFAULT_CARDS_KANJI_SATUAN], kotoba_n3: [...DEFAULT_CARDS_KOTOBA_N3], kotoba_n4: [...DEFAULT_CARDS_KOTOBA_N4] };
 }
 
 let allCards = loadAllCards();
