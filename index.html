@@ -157,13 +157,22 @@
 
     </div>
   </div>
+
+  <div style="height:44px;"></div>
 </div>
+
+<footer style="position:fixed; left:0; right:0; bottom:0; z-index:999; text-align:center; padding:10px 12px; background:rgba(20,20,30,0.85); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); color:#fff; font-size:.8rem; box-shadow:0 -2px 10px rgba(0,0,0,0.15);">
+  &copy; <span id="copyright-year"></span> <a href="https://mhabibr02.github.io/Portofolio-Website/" target="_blank" rel="noopener noreferrer" style="color:#fff; text-decoration:underline; font-weight:600;">@mhabibr02</a>. All rights reserved.
+</footer>
+
+<script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
 
 <!-- Data flashcard per kelompok (masing-masing file terpisah) -->
 <script src="js/data-pengolah-makanan.js"></script>
 <script src="js/data-pertanian.js"></script>
 <script src="js/data-kanji-satuan.js"></script>
 <script src="js/data-kotoba-n3.js"></script>
+<script src="js/data-kotoba-n4.js"></script>
 
 <!-- Logika utama aplikasi -->
 <script src="js/script.js"></script>
