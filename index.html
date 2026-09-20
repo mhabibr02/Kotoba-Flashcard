@@ -25,7 +25,7 @@
     <div class="section-title">
       <div class="badge" style="background:linear-gradient(135deg,var(--orange),var(--yellow))">🗂️</div>
       Browse Flashcard
-      <span style="color:var(--muted);font-size:.85rem;font-weight:400;">· Nomor, kanji, furigana &amp; arti langsung terlihat</span>
+      <span style="color:var(--muted);font-size:.85rem;font-weight:400;">Menampilkan Nomor Kartu, Kanji, Furigana &amp; Arti</span>
     </div>
     <div class="category-tabs" id="browse-cat-tabs"></div>
 
@@ -41,7 +41,7 @@
         <button class="btn-ctrl primary" onclick="searchBrowseRange()">&#x1F50D; Cari</button>
         <button class="btn-ctrl" onclick="resetBrowseRange()">&#x21BA; Tampilkan Semua</button>
       </div>
-      <div class="range-info-row" id="browse-search-info">&#x1F4E6; Menampilkan semua kartu</div>
+      <div class="range-info-row" id="browse-search-info">&#x1F4E6; Menampilkan Semua Kartu</div>
     </div>
 
     <div class="browse-controls">
@@ -50,7 +50,7 @@
 
     <div id="browse-grid" class="browse-card-grid"></div>
     <div id="browse-empty" class="empty-state" style="display:none;">
-      <div class="e-icon">📭</div><p>Tidak ada kartu.</p>
+      <div class="e-icon">📭</div><p>Tidak Ada Kartu.</p>
     </div>
   </div>
 
@@ -59,7 +59,7 @@
     <div id="game-start-screen" class="game-start">
       <div style="font-size:4rem;margin-bottom:16px;">🎌</div>
       <h2>Mode Tebak Kanji!</h2>
-      <p>Tebak arti dari setiap kanji yang muncul.<br>Klik kartu untuk melihat jawaban, lalu nilai dirimu sendiri.</p>
+      <p>Tebak Furigana &amp; Arti dari Setiap Kanji yang Muncul.<br>Klik Kartu Untuk Melihat Jawaban, Lalu Nilai Dirimu Sendiri.</p>
       <div style="margin-bottom:16px;" id="game-empty-note"></div>
 
       <div class="category-tabs" id="game-cat-tabs"></div>
@@ -82,7 +82,7 @@
         </div>
 
         <div class="range-info-row" id="range-info-row">
-          &#x1F4E6; <span id="range-info-text">Semua kartu akan digunakan</span>
+          &#x1F4E6; <span id="range-info-text">Semua Kartu Akan Digunakan</span>
         </div>
       </div>
 
@@ -110,7 +110,7 @@
             <div class="game-front">
               <div class="game-front-left">
                 <div class="game-num" id="g-num">#01</div>
-                <div class="game-prompt">👆 Klik untuk<br>lihat jawaban</div>
+                <div class="game-prompt">👆 Klik Untuk<br>Lihat Jawaban</div>
               </div>
               <div class="game-kanji" id="g-kanji">山</div>
             </div>
@@ -142,7 +142,7 @@
       <div class="result-screen">
         <div class="result-emoji" id="r-emoji">🎉</div>
         <div class="result-title" id="r-title">Luar Biasa!</div>
-        <div class="result-sub" id="r-sub">Kamu menjawab semua kartu!</div>
+        <div class="result-sub" id="r-sub">Kamu Menjawab Semua Kartu!</div>
         <div class="result-score-big" id="r-score">10/10</div>
         <div style="color:var(--muted);margin-top:8px;font-size:.85rem;" id="r-percent"></div>
         <div class="result-actions">
