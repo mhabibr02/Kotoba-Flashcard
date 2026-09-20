@@ -122,13 +122,13 @@ function renderBrowseLazy() {
   if (!cards.length) {
     grid.innerHTML = '';
     empty.style.display = 'block';
-    empty.querySelector('p').textContent = 'Tidak ada kartu. Tambahkan dulu di halaman Kelola!';
+    empty.querySelector('p').textContent = 'Tidak Ada Kartu. Tambahkan Dulu di Halaman Kelola!';
     return;
   }
   if (!list.length) {
     grid.innerHTML = '';
     empty.style.display = 'block';
-    empty.querySelector('p').textContent = 'Tidak ada kartu pada range nomor tersebut.';
+    empty.querySelector('p').textContent = 'Tidak Ada Kartu Pada Range Nomor Tersebut.';
     return;
   }
   empty.style.display = 'none';
@@ -209,7 +209,7 @@ function syncBrowseSearchInfo() {
   if (!info) return;
   if (!browseFilter) {
     info.className = 'range-info-row';
-    info.textContent = `📦 Menampilkan semua ${cards.length} kartu`;
+    info.textContent = `📦 Menampilkan Semua ${cards.length} Kartu`;
     return;
   }
   const from = Math.max(1, browseFilter.from);
@@ -217,10 +217,10 @@ function syncBrowseSearchInfo() {
   const count = Math.max(0, to - from + 1);
   if (browseFilter.from > browseFilter.to || count === 0) {
     info.className = 'range-info-row warn';
-    info.textContent = '⚠️ Tidak ada kartu pada range nomor tersebut.';
+    info.textContent = '⚠️ Tidak Ada Kartu Pada Range Nomor Tersebut.';
   } else {
     info.className = 'range-info-row';
-    info.textContent = `📦 Menampilkan ${count} kartu (No. ${from} – ${to} dari ${cards.length} total)`;
+    info.textContent = `📦 Menampilkan ${count} Kartu (No. ${from} – ${to} Dari ${cards.length} Total)`;
   }
 }
 
@@ -309,7 +309,7 @@ function updateRangeInfo() {
   const infoText = document.getElementById('range-info-text');
   if(rangeMode === 'all') {
     infoRow.className = 'range-info-row';
-    infoText.textContent = `Semua ${cards.length} kartu akan digunakan`;
+    infoText.textContent = `Semua ${cards.length} Kartu Akan Digunakan`;
     return;
   }
   const sel = getSelectedCards();
@@ -317,10 +317,10 @@ function updateRangeInfo() {
   const to   = parseInt(document.getElementById('inp-range-to').value)   || cards.length;
   if(!sel.length || from > to || from < 1) {
     infoRow.className = 'range-info-row warn';
-    infoText.textContent = 'Range tidak valid. Periksa kembali angkanya.';
+    infoText.textContent = 'Range Tidak Valid. Periksa Kembali Angkanya.';
   } else {
     infoRow.className = 'range-info-row';
-    infoText.textContent = `${sel.length} kartu dipilih (No. ${Math.max(1,from)} – ${Math.min(cards.length,to)} dari ${cards.length} total)`;
+    infoText.textContent = `${sel.length} Kartu Dipilih (No. ${Math.max(1,from)} – ${Math.min(cards.length,to)} Dari ${cards.length} Total)`;
   }
 }
 
@@ -330,7 +330,7 @@ function renderGameStart() {
   document.getElementById('game-result-screen').style.display='none';
   const note = document.getElementById('game-empty-note');
   note.innerHTML = cards.length
-    ? `<div class="shuffle-tag">&#x1F500; ${cards.length} kartu tersedia &middot; diacak otomatis</div>`
+    ? `<div class="shuffle-tag">&#x1F500; ${cards.length} Kartu Tersedia &middot; Diacak Otomatis</div>`
     : `<div class="empty-state" style="padding:16px 0;"><div class="e-icon" style="font-size:2rem;">&#x1F4ED;</div><p>Tambahkan kartu dulu!</p></div>`;
   document.getElementById('inp-range-from').value = 1;
   document.getElementById('inp-range-to').value = cards.length || '';
@@ -451,11 +451,11 @@ function showResult() {
   document.getElementById('game-result-screen').style.display='block';
   const total=gameQueue.length, pct=Math.round(gameCorrect/total*100);
   let emoji,title,sub;
-  if(pct===100){emoji='🏆';title='Sempurna!';sub='Kamu menjawab semua dengan benar!';}
+  if(pct===100){emoji='🏆';title='Sempurna!';sub='Kamu Menjawab Semua Dengan Benar!';}
   else if(pct>=80){emoji='🎉';title='Luar Biasa!';sub='Kamu hampir sempurna!';}
-  else if(pct>=60){emoji='👍';title='Bagus!';sub='Terus berlatih ya!';}
-  else if(pct>=40){emoji='📚';title='Lumayan!';sub='Masih banyak yang perlu dipelajari.';}
-  else{emoji='💪';title='Jangan Menyerah!';sub='Latihan membuat sempurna!';}
+  else if(pct>=60){emoji='👍';title='Bagus!';sub='Terus Berlatih Ya!';}
+  else if(pct>=40){emoji='📚';title='Lumayan!';sub='Masih Banyak yang Perlu Dipelajari.';}
+  else{emoji='💪';title='Jangan Menyerah!';sub='Latihan Membuat Sempurna!';}
   document.getElementById('r-emoji').textContent = emoji;
   document.getElementById('r-title').textContent = title;
   document.getElementById('r-sub').textContent   = sub;
@@ -468,7 +468,7 @@ function showResult() {
     rangeLabel = `Range No. ${from} \u2013 ${to}`;
   }
   const rp = document.getElementById('r-percent');
-  rp.innerHTML = `${pct}% benar &nbsp;&middot;&nbsp; <span style="color:var(--purple)">${rangeLabel}</span>`;
+  rp.innerHTML = `${pct}% Benar &nbsp;&middot;&nbsp; <span style="color:var(--purple)">${rangeLabel}</span>`;
 
   // ── Render wrong cards section ──
   const wrongSection = document.getElementById('r-wrong-section');
@@ -476,14 +476,14 @@ function showResult() {
     wrongSection.innerHTML = `
       <div class="wrong-section-title">
         <span class="wrong-section-icon">✅</span>
-        Tidak ada kartu yang salah — sempurna!
+        Tidak Ada Kartu yang Salah — Sempurna!
       </div>`;
   } else {
     wrongSection.innerHTML = `
       <div class="wrong-section-title">
         <span class="wrong-section-icon">❌</span>
         Kartu yang Salah (${wrongCards.length})
-        <span style="font-size:.75rem; font-weight:400; color:var(--muted);">— pelajari lagi ya!</span>
+        <span style="font-size:.75rem; font-weight:400; color:var(--muted);">— Pelajari Lagi Ya!</span>
       </div>
       <div class="wrong-cards-grid">
         ${wrongCards.map((c, i) => `
