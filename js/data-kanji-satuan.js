@@ -570,7 +570,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '値', furigana: 'あたい(atai), ね(ne), チ(chi)', meaning: 'Harga' },
   { kanji: '突', furigana: 'つ-く(tsu-ku), トツ(totsu), カ(ka)', meaning: 'Menikam' },
   { kanji: '光', furigana: 'ひか-る(hika-ru), ひかり(hikari), コウ(kou)', meaning: 'Cahaya' },
-  { kanji: '積', furigana: 'つ-む(tsu-mu), つ-もる(tsu-moru), セキ(seki)', meaning: 'Bunyi/Tumpukan' },
+  { kanji: '積', furigana: 'つ-む(tsu-mu), つ-もる(tsu-moru), セキ(seki)', meaning: 'Menumpukan' },
   { kanji: '他', furigana: 'ほか(hoka), タ(ta)', meaning: 'Yang Lain' },
   { kanji: '処', furigana: 'ところ(tokoro), こ(ko), ショ(sho)', meaning: 'Mengatur' },
   { kanji: '否', furigana: 'いな(ina), いや(iya), ヒ(hi)', meaning: 'Tidak/Negatif' },
