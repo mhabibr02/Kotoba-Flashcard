@@ -591,7 +591,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '富', furigana: 'と-む(to-mu), フ(fu), フウ(fuu)', meaning: 'Kekayaan' },
   { kanji: '未', furigana: 'いま-だ(ima-da), ま-だ(ma-da), ひつじ(hitsuji), ミ(mi), ビ(bi)', meaning: 'Masih/Sebelum/Tetap' },
   { kanji: '舞', furigana: 'ま-る(ma-ru), ま-う(ma-u), ブ(bu)', meaning: 'Menarik' },
-  { kanji: '亡', furigana: 'な-い(na-i), な-くなる(na-kunaru), ほろ-ぶ(horo-bu), ボウ(bou), モウ(mou)', meaning: 'Meninggal Dunia/Menghilang' },
+  { kanji: '亡', furigana: 'な-い(na-i), な-くなる(na-kunaru), ほろ-ぶ(horo-bu), ボウ(bou), モウ(mou)', meaning: 'Meninggal Dunia' },
   { kanji: '寄', furigana: 'よ-る(yo-ru), よ-り(yo-ri), キ(ki)', meaning: 'Mengumpulkan' },
   { kanji: '込', furigana: 'こ-む(ko-mu), こ-み(ko-mi)', meaning: 'Masuk' },
   { kanji: '余', furigana: 'あま-る(ama-ru), あま-り(ama-ri), ヨ(yo)', meaning: 'Tidak Begitu' },
