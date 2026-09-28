@@ -331,7 +331,7 @@ function renderGameStart() {
   const note = document.getElementById('game-empty-note');
   note.innerHTML = cards.length
     ? `<div class="shuffle-tag">&#x1F500; ${cards.length} Kartu Tersedia &middot; Diacak Otomatis</div>`
-    : `<div class="empty-state" style="padding:16px 0;"><div class="e-icon" style="font-size:2rem;">&#x1F4ED;</div><p>Tambahkan kartu dulu!</p></div>`;
+    : `<div class="empty-state" style="padding:16px 0;"><div class="e-icon" style="font-size:2rem;">&#x1F4ED;</div><p>Tambahkan Kartu Dulu!</p></div>`;
   document.getElementById('inp-range-from').value = 1;
   document.getElementById('inp-range-to').value = cards.length || '';
   buildQuickRanges();
@@ -382,7 +382,7 @@ function loadCard() {
   document.getElementById('g-mean').textContent  = c.meaning;
   document.getElementById('g-kanji').style.color = COLORS[gameIndex % COLORS.length];
   document.getElementById('g-prog-fill').style.width = (gameIndex/gameQueue.length*100)+'%';
-  document.getElementById('g-prog-text').textContent = `Kartu ${gameIndex+1} dari ${gameQueue.length}`;
+  document.getElementById('g-prog-text').textContent = `Kartu ${gameIndex+1} Dari ${gameQueue.length}`;
 
   const tag = document.getElementById('g-range-tag');
   if(rangeMode === 'range') {
@@ -461,7 +461,7 @@ function showResult() {
   document.getElementById('r-sub').textContent   = sub;
   document.getElementById('r-score').textContent = `${gameCorrect}/${total}`;
 
-  let rangeLabel = 'Semua kartu';
+  let rangeLabel = 'Semua Kartu';
   if(rangeMode === 'range') {
     const from = document.getElementById('inp-range-from').value;
     const to   = document.getElementById('inp-range-to').value;
