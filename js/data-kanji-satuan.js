@@ -300,7 +300,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '涼', furigana: 'すず-しい(suzu-shii),リョウ(ryou)', meaning: 'Sejuk' },
   { kanji: '天', furigana: 'あめ(ame),あま(ama),テン(ten)', meaning: 'Cuaca' },
   { kanji: '仕', furigana: 'つか-える(tsuka-eru),シ(shi)', meaning: 'Melayani' },
-  { kanji: '事', furigana: 'こと(koto),ジ(ji)', meaning: 'Urusan/Hal' },
+  { kanji: '事', furigana: 'こと(koto),ジ(ji)', meaning: 'Perihal' },
   { kanji: '者', furigana: 'もの(mono),シャ(sha)', meaning: 'Orang' },
   { kanji: '運', furigana: 'はこ-ぶ(hako-bu),ウン(un)', meaning: 'Mengangkut' },
   { kanji: '転', furigana: 'ころ-ぶ(koro-bu),テン(ten)', meaning: 'Berguling/Jatuh' },
