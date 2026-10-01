@@ -23,7 +23,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '一', furigana: 'ひと-つ(hito-tsu),イチ(ichi)', meaning: 'Satu' },
   { kanji: '二', furigana: 'ふた-つ(futa-tsu),ニ(ni)', meaning: 'Dua' },
   { kanji: '三', furigana: 'みっ-つ(mit-tsu),サン(san)', meaning: 'Tiga' },
-  { kanji: '四', furigana: 'よっ-つ(yot-tsu),よん(yon),よ(yo),シ(chi)', meaning: 'Empat' },
+  { kanji: '四', furigana: 'よっ-つ(yot-tsu),よん(yon),よ(yo),シ(shi)', meaning: 'Empat' },
   { kanji: '五', furigana: 'いつ-つ(itsu-tsu),ゴ(go)', meaning: 'Lima' },
   { kanji: '六', furigana: 'むっ-つ(mut-tsu),ロク(roku),ロッ(ro)', meaning: 'Enam' },
   { kanji: '七', furigana: 'なな-つ(nana-tsu),シチ(shichi)', meaning: 'Tujuh' },
