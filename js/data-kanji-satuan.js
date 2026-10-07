@@ -105,7 +105,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '方', furigana: 'かた(kata),がた(gata),ホウ(hou)', meaning: 'Cara' },
   { kanji: '午', furigana: 'ゴ(go)', meaning: 'AM/PM' },
   { kanji: '前', furigana: 'まえ(mae),ゼン(zen)', meaning: 'Depan/Sebelum' },
-  { kanji: '後', furigana: 'あと(ato),のち(nochi),うし-ろ(ushi-ro),ゴ(go),コウ(kou)', meaning: 'Belakang/Setelah/Nanti' },
+  { kanji: '後', furigana: 'あと(ato),のち(nochi),うし-ろ(ushi-ro),ゴ(go),コウ(kou)', meaning: 'Belakang/Setelah' },
   { kanji: '毎', furigana: 'マイ(mai)', meaning: 'Setiap' },
   { kanji: '週', furigana: 'シュウ(shuu)', meaning: 'Minggu' },
   { kanji: '曜', furigana: 'ヨウ(you)', meaning: 'Nama Hari' },
