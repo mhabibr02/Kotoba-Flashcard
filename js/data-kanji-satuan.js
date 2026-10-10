@@ -363,7 +363,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '交', furigana: 'ま-じる(ma-jiru),まじ-わる(maji-waru),コウ(kou)', meaning: 'Bergaul/Menyilang/Bertukar' },
   { kanji: '機', furigana: 'キ(ki)', meaning: 'Mesin' },
   { kanji: '関', furigana: 'カン(kan)', meaning: 'Hubungan' },
-  { kanji: '局', furigana: 'キョク(kyoku)', meaning: 'Bagian/Biro' },
+  { kanji: '局', furigana: 'キョク(kyoku)', meaning: 'Biro' },
   { kanji: '信', furigana: 'シン(shin)', meaning: 'Percaya' },
   { kanji: '路', furigana: 'ロ(ro)', meaning: 'Lorong' },
   { kanji: '故', furigana: 'コ(ko)', meaning: 'Hambatan' },
