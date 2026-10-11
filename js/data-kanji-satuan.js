@@ -153,7 +153,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '青', furigana: 'あお-い(ao-i),セイ(sei)', meaning: 'Biru' },
   { kanji: '晴', furigana: 'は-れる(ha-reru),は-れ(ha-re),セイ(sei)', meaning: 'Cerah' },
   { kanji: '静', furigana: 'しず-かな(shizu-kana),セイ(sei)', meaning: 'Tenang/Diam' },
-  { kanji: '寺', furigana: 'てら(tera),ジ(ji)', meaning: 'Kuil Buddha' },
+  { kanji: '寺', furigana: 'てら(tera),ジ(ji)', meaning: 'Kuil' },
   { kanji: '持', furigana: 'も-つ(mo-tsu),ジ(ji)', meaning: 'Membawa/Memegang' },
   { kanji: '荷', furigana: 'に(ni),カ(ka)', meaning: 'Muat' },
   { kanji: '歌', furigana: 'うた(uta),うた-う(uta-u),カ(ka)', meaning: 'Lagu/Menyanyi' },
