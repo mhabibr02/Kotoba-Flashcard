@@ -453,7 +453,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '老', furigana: 'お-いる(o-iru),ロウ(rou)', meaning: 'Menua' },
   { kanji: '族', furigana: 'ゾク(zoku)', meaning: 'Suku' },
   { kanji: '配', furigana: 'くば-る(kuba-ru),ハイ(hai),パイ(pai)', meaning: 'Mendistribusikan' },
-  { kanji: '術', furigana: 'ジュツ(jutsu)', meaning: 'Teknik' },
+  { kanji: '術', furigana: 'ジュツ(jutsu)', meaning: 'Seni' },
   { kanji: '退', furigana: 'しりぞく(shirizoku),タイ(tai)', meaning: 'Mundur' },
   { kanji: '効', furigana: 'き-く(ki-ku),コウ(kou)', meaning: 'Efek' },
   { kanji: '民', furigana: 'ミン(min)', meaning: 'Rakyat/Penduduk' },
