@@ -606,7 +606,7 @@ const DEFAULT_CARDS_KANJI_SATUAN = [
   { kanji: '罪', furigana: 'つみ(tsumi),ザイ(zai)', meaning: 'Dosa' },
   { kanji: '努', furigana: 'つと-める(tsuto-meru),ド(do)', meaning: 'Kerja Keras' },
   { kanji: '精', furigana: 'セイ(sei),ショウ(shou)', meaning: 'Jiwa' },
-  { kanji: '散', furigana: 'ち-る(chi-ru),ち-らす(chi-rasu),サン(san)', meaning: 'Menyebar' },
+  { kanji: '散', furigana: 'ち-る(chi-ru),ち-らす(chi-rasu),サン(san)', meaning: 'Rontok' },
   { kanji: '浮', furigana: 'う-く(u-ku),う-かぶ(u-kabu),フ(fu)', meaning: 'Mengapung' },
   { kanji: '絶', furigana: 'た-える(ta-eru),た-やす(ta-yasu),ゼツ(zetsu)', meaning: 'Menyela' },
   { kanji: '幸', furigana: 'さいわ-い(saiwa-i),さち(sachi),コウ(kou)', meaning: 'Kebahagiaan' },
